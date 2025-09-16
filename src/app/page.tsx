@@ -1,4 +1,4 @@
-// src/app/page.tsx
+// src/app/page.tsx - Updated version
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,7 +19,7 @@ export default function HomePage() {
 			try {
 				const [menusData, contentsData] = await Promise.all([
 					api.getMenuTree(),
-					api.getContents({ status: PublishStatus.PUBLISHED, limit: 5 }),
+					api.getContents({ status: PublishStatus.PUBLISHED, limit: 6 }),
 				]);
 				setMenus(menusData);
 				setRecentContents(contentsData.data);
@@ -57,20 +57,23 @@ export default function HomePage() {
 							<p className='mt-4 text-lg text-gray-600'>
 								김종서장군기념사업회의 최근 활동과 소식을 전해드립니다.
 							</p>
+							<div className='w-24 h-1 bg-brand-600 mx-auto mt-4'></div>
 						</div>
 
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
 							{recentContents.map((content) => (
-								<div
+								<article
 									key={content.id}
-									className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow'
+									className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200'
 								>
 									{content.featuredImage && (
-										<img
-											src={content.featuredImage}
-											alt={content.title}
-											className='w-full h-48 object-cover'
-										/>
+										<div className='relative h-48 bg-gray-200'>
+											<img
+												src={content.featuredImage}
+												alt={content.title}
+												className='w-full h-48 object-cover'
+											/>
+										</div>
 									)}
 									<div className='p-6'>
 										<div className='text-sm text-brand-600 font-medium mb-2'>
@@ -92,8 +95,30 @@ export default function HomePage() {
 											<span>조회 {content.viewCount}</span>
 										</div>
 									</div>
-								</div>
+								</article>
 							))}
+						</div>
+
+						<div className='text-center mt-8'>
+							<a
+								href='/library'
+								className='inline-flex items-center px-6 py-3 border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 rounded-lg font-medium transition-colors'
+							>
+								더 많은 소식 보기
+								<svg
+									className='ml-2 h-4 w-4'
+									fill='none'
+									stroke='currentColor'
+									viewBox='0 0 24 24'
+								>
+									<path
+										strokeLinecap='round'
+										strokeLinejoin='round'
+										strokeWidth={2}
+										d='M9 5l7 7-7 7'
+									/>
+								</svg>
+							</a>
 						</div>
 					</div>
 				</section>

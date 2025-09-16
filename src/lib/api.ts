@@ -108,6 +108,24 @@ class ApiClient {
 		await this.client.post('/menu/seed');
 	}
 
+	async updateMenuSortOrder(
+		reorderData: { id: number; sortOrder: number; parentId?: number }[]
+	): Promise<void> {
+		await this.client.patch('/menu/reorder', reorderData);
+	}
+
+	async getMenuByPath(path: string): Promise<Menu> {
+		const response = await this.client.get<Menu>(`/menu/by-path/${path}`);
+		return response.data;
+	}
+
+	async getContentByMenuPath(path: string): Promise<Content[]> {
+		const response = await this.client.get<Content[]>(
+			`/content/by-menu-path/${path}`
+		);
+		return response.data;
+	}
+
 	// Content endpoints
 	async getContents(params?: {
 		type?: ContentType;
