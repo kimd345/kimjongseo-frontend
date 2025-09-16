@@ -214,7 +214,10 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 								메뉴 연결
 							</label>
 							<select
-								{...register('menuId')}
+								{...register('menuId', {
+									setValueAs: (value) =>
+										value === '' ? undefined : Number(value),
+								})}
 								className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
 							>
 								<option value=''>메뉴 선택</option>
