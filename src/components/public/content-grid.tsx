@@ -1,6 +1,7 @@
-// src/components/public/content-grid.tsx
+// src/components/public/enhanced-content-grid.tsx
 'use client';
 
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Content, ContentType } from '@/types';
 import {
@@ -12,17 +13,24 @@ import {
 	PhotoIcon,
 	EyeIcon,
 	CalendarIcon,
+	MagnifyingGlassIcon,
+	FunnelIcon,
 } from '@heroicons/react/24/outline';
 
 interface ContentGridProps {
 	contents: Content[];
 	menuName: string;
+	showFilters?: boolean;
 }
 
-export default function ContentGrid({ contents, menuName }: ContentGridProps) {
-	if (contents.length === 0) {
-		return null;
-	}
+export default function ContentGrid({
+	contents,
+	menuName,
+	showFilters = true,
+}: ContentGridProps) {
+	const [searchTerm, setSearchTerm] = useState('');
+	const [selectedType, setSelectedType] = useState<ContentType | 'all'>('all');
+	const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
 	const getContentIcon = (type: ContentType) => {
 		switch (type) {
@@ -75,6 +83,38 @@ export default function ContentGrid({ contents, menuName }: ContentGridProps) {
 		}
 	};
 
+	// Get unique categories and types
+	const categories = useMemo(() => {
+		const uniqueCategories = [
+			...new Set(contents.map((c) => c.category).filter(Boolean)),
+		];
+		return uniqueCategories;
+	}, [contents]);
+
+	const contentTypes = useMemo(() => {
+		const uniqueTypes = [...new Set(contents.map((c) => c.type))];
+		return uniqueTypes;
+	}, [contents]);
+
+	// Filter contents
+	const filteredContents = useMemo(() => {
+		return contents.filter((content) => {
+			const matchesSearch =
+				searchTerm === '' ||
+				content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				content.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				(content.category &&
+					content.category.toLowerCase().includes(searchTerm.toLowerCase()));
+
+			const matchesType =
+				selectedType === 'all' || content.type === selectedType;
+			const matchesCategory =
+				selectedCategory === 'all' || content.category === selectedCategory;
+
+			return matchesSearch && matchesType && matchesCategory;
+		});
+	}, [contents, searchTerm, selectedType, selectedCategory]);
+
 	const formatDate = (dateString: string) => {
 		return new Date(dateString).toLocaleDateString('ko-KR', {
 			year: 'numeric',
@@ -90,6 +130,22 @@ export default function ContentGrid({ contents, menuName }: ContentGridProps) {
 			: stripped;
 	};
 
+	if (contents.length === 0) {
+		return (
+			<section className='text-center py-16'>
+				<div className='max-w-md mx-auto'>
+					<DocumentTextIcon className='mx-auto h-12 w-12 text-gray-400' />
+					<h3 className='mt-2 text-lg font-medium text-gray-900'>
+						콘텐츠가 없습니다
+					</h3>
+					<p className='mt-1 text-gray-500'>
+						이 메뉴에 등록된 콘텐츠가 없습니다.
+					</p>
+				</div>
+			</section>
+		);
+	}
+
 	return (
 		<section>
 			<div className='text-center mb-8'>
@@ -98,131 +154,209 @@ export default function ContentGrid({ contents, menuName }: ContentGridProps) {
 				</h2>
 				<div className='w-24 h-1 bg-brand-600 mx-auto'></div>
 				<p className='mt-4 text-gray-600'>
-					총 {contents.length}개의 콘텐츠가 있습니다.
+					총 {filteredContents.length}개의 콘텐츠가 있습니다.
 				</p>
 			</div>
 
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-				{contents.map((content) => {
-					const IconComponent = getContentIcon(content.type);
+			{/* Filters */}
+			{showFilters && (contents.length > 6 || categories.length > 0) && (
+				<div className='mb-8 space-y-4'>
+					{/* Search Bar */}
+					<div className='relative max-w-md mx-auto'>
+						<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+							<MagnifyingGlassIcon className='h-5 w-5 text-gray-400' />
+						</div>
+						<input
+							type='text'
+							placeholder='콘텐츠 검색...'
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-brand-500 focus:border-brand-500'
+						/>
+					</div>
 
-					return (
-						<article
-							key={content.id}
-							className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200'
-						>
-							{/* Featured Image */}
-							{content.featuredImage && (
-								<div className='relative h-48 bg-gray-200'>
-									<img
-										src={content.featuredImage}
-										alt={content.title}
-										className='w-full h-full object-cover'
-									/>
-									<div className='absolute top-4 left-4'>
-										<span
-											className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getContentTypeColor(content.type)}`}
-										>
-											<IconComponent className='h-3 w-3 mr-1' />
-											{getContentTypeLabel(content.type)}
-										</span>
-									</div>
-								</div>
-							)}
+					{/* Filter Options */}
+					<div className='flex flex-wrap items-center justify-center gap-4'>
+						<div className='flex items-center gap-2'>
+							<FunnelIcon className='h-4 w-4 text-gray-500' />
+							<span className='text-sm font-medium text-gray-700'>필터:</span>
+						</div>
 
-							<div className='p-6'>
-								{/* Content Type Badge (if no featured image) */}
-								{!content.featuredImage && (
-									<div className='mb-3'>
-										<span
-											className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getContentTypeColor(content.type)}`}
-										>
-											<IconComponent className='h-3 w-3 mr-1' />
-											{getContentTypeLabel(content.type)}
-										</span>
-									</div>
-								)}
+						{/* Content Type Filter */}
+						{contentTypes.length > 1 && (
+							<select
+								value={selectedType}
+								onChange={(e) =>
+									setSelectedType(e.target.value as ContentType | 'all')
+								}
+								className='text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-1 focus:ring-brand-500'
+							>
+								<option value='all'>모든 유형</option>
+								{contentTypes.map((type) => (
+									<option key={type} value={type}>
+										{getContentTypeLabel(type)}
+									</option>
+								))}
+							</select>
+						)}
 
-								{/* Category */}
-								{content.category && (
-									<div className='text-sm text-brand-600 font-medium mb-2'>
-										{content.category}
-									</div>
-								)}
+						{/* Category Filter */}
+						{categories.length > 0 && (
+							<select
+								value={selectedCategory}
+								onChange={(e) => setSelectedCategory(e.target.value)}
+								className='text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-1 focus:ring-brand-500'
+							>
+								<option value='all'>모든 카테고리</option>
+								{categories.map((category) => (
+									<option key={category} value={category}>
+										{category}
+									</option>
+								))}
+							</select>
+						)}
 
-								{/* Title */}
-								<h3 className='text-lg font-semibold text-gray-900 mb-3 line-clamp-2'>
-									{content.title}
-								</h3>
+						{/* Clear Filters */}
+						{(searchTerm ||
+							selectedType !== 'all' ||
+							selectedCategory !== 'all') && (
+							<button
+								onClick={() => {
+									setSearchTerm('');
+									setSelectedType('all');
+									setSelectedCategory('all');
+								}}
+								className='text-sm text-brand-600 hover:text-brand-700 font-medium'
+							>
+								필터 초기화
+							</button>
+						)}
+					</div>
+				</div>
+			)}
 
-								{/* Content Preview */}
-								<p className='text-gray-600 text-sm mb-4 line-clamp-3'>
-									{truncateContent(content.content)}
-								</p>
+			{/* No Results */}
+			{filteredContents.length === 0 && (
+				<div className='text-center py-12'>
+					<MagnifyingGlassIcon className='mx-auto h-12 w-12 text-gray-400' />
+					<h3 className='mt-2 text-lg font-medium text-gray-900'>
+						검색 결과가 없습니다
+					</h3>
+					<p className='mt-1 text-gray-500'>
+						다른 검색어나 필터를 시도해보세요.
+					</p>
+				</div>
+			)}
 
-								{/* YouTube Preview for Video Content */}
-								{content.type === ContentType.VIDEO && content.youtubeId && (
-									<div className='mb-4'>
-										<div className='relative aspect-video bg-gray-100 rounded-lg overflow-hidden'>
+			{/* Content Grid */}
+			{filteredContents.length > 0 && (
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+					{filteredContents.map((content) => {
+						const IconComponent = getContentIcon(content.type);
+
+						return (
+							<Link
+								key={content.id}
+								href={`/content/${content.id}`}
+								className='group'
+							>
+								<article className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-brand-300 transition-all duration-200'>
+									{/* Featured Image */}
+									{content.featuredImage && (
+										<div className='relative h-48 bg-gray-200 overflow-hidden'>
 											<img
-												src={`https://img.youtube.com/vi/${content.youtubeId}/mqdefault.jpg`}
+												src={content.featuredImage}
 												alt={content.title}
-												className='w-full h-full object-cover'
+												className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-200'
 											/>
-											<div className='absolute inset-0 flex items-center justify-center'>
-												<div className='bg-red-600 text-white rounded-full p-3'>
-													<PlayIcon className='h-6 w-6' />
-												</div>
+											<div className='absolute top-4 left-4'>
+												<span
+													className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getContentTypeColor(content.type)}`}
+												>
+													<IconComponent className='h-3 w-3 mr-1' />
+													{getContentTypeLabel(content.type)}
+												</span>
 											</div>
 										</div>
-									</div>
-								)}
-
-								{/* Meta Information */}
-								<div className='flex items-center justify-between text-sm text-gray-500 mb-4'>
-									<div className='flex items-center gap-4'>
-										<span className='flex items-center gap-1'>
-											<CalendarIcon className='h-4 w-4' />
-											{formatDate(content.createdAt)}
-										</span>
-										<span className='flex items-center gap-1'>
-											<EyeIcon className='h-4 w-4' />
-											{content.viewCount}
-										</span>
-									</div>
-									{content.authorName && (
-										<span className='text-gray-600'>{content.authorName}</span>
 									)}
-								</div>
 
-								{/* Read More Button */}
-								<Link
-									href={`/content/${content.id}`}
-									className='inline-flex items-center text-brand-600 hover:text-brand-700 font-medium text-sm transition-colors'
-								>
-									자세히 보기
-									<svg
-										className='ml-1 h-4 w-4'
-										fill='none'
-										stroke='currentColor'
-										viewBox='0 0 24 24'
-									>
-										<path
-											strokeLinecap='round'
-											strokeLinejoin='round'
-											strokeWidth={2}
-											d='M9 5l7 7-7 7'
-										/>
-									</svg>
-								</Link>
-							</div>
-						</article>
-					);
-				})}
-			</div>
+									<div className='p-6'>
+										{/* Content Type Badge (if no featured image) */}
+										{!content.featuredImage && (
+											<div className='mb-3'>
+												<span
+													className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getContentTypeColor(content.type)}`}
+												>
+													<IconComponent className='h-3 w-3 mr-1' />
+													{getContentTypeLabel(content.type)}
+												</span>
+											</div>
+										)}
 
-			{/* Load More Button (for future pagination) */}
-			{contents.length >= 9 && (
+										{/* Category */}
+										{content.category && (
+											<div className='text-sm text-brand-600 font-medium mb-2'>
+												{content.category}
+											</div>
+										)}
+
+										{/* Title */}
+										<h3 className='text-lg font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-brand-600 transition-colors'>
+											{content.title}
+										</h3>
+
+										{/* Content Preview */}
+										<p className='text-gray-600 text-sm mb-4 line-clamp-3'>
+											{truncateContent(content.content)}
+										</p>
+
+										{/* YouTube Preview for Video Content */}
+										{content.type === ContentType.VIDEO &&
+											content.youtubeId && (
+												<div className='mb-4'>
+													<div className='relative aspect-video bg-gray-100 rounded-lg overflow-hidden'>
+														<img
+															src={`https://img.youtube.com/vi/${content.youtubeId}/mqdefault.jpg`}
+															alt={content.title}
+															className='w-full h-full object-cover'
+														/>
+														<div className='absolute inset-0 flex items-center justify-center'>
+															<div className='bg-red-600 text-white rounded-full p-3 group-hover:scale-110 transition-transform'>
+																<PlayIcon className='h-6 w-6' />
+															</div>
+														</div>
+													</div>
+												</div>
+											)}
+
+										{/* Meta Information */}
+										<div className='flex items-center justify-between text-sm text-gray-500'>
+											<div className='flex items-center gap-4'>
+												<span className='flex items-center gap-1'>
+													<CalendarIcon className='h-4 w-4' />
+													{formatDate(content.createdAt)}
+												</span>
+												<span className='flex items-center gap-1'>
+													<EyeIcon className='h-4 w-4' />
+													{content.viewCount}
+												</span>
+											</div>
+											{content.authorName && (
+												<span className='text-gray-600 truncate max-w-24'>
+													{content.authorName}
+												</span>
+											)}
+										</div>
+									</div>
+								</article>
+							</Link>
+						);
+					})}
+				</div>
+			)}
+
+			{/* Load More / Pagination placeholder */}
+			{filteredContents.length >= 12 && (
 				<div className='text-center mt-8'>
 					<button className='inline-flex items-center px-6 py-3 border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 rounded-lg font-medium transition-colors'>
 						더 많은 콘텐츠 보기

@@ -1,4 +1,4 @@
-// src/components/public/menu-page-layout.tsx
+// src/components/public/menu-page-layout.tsx - Updated
 'use client';
 
 import { Menu, Content } from '@/types';
@@ -21,7 +21,8 @@ export default function MenuPageLayout({
 	currentPath,
 }: MenuPageLayoutProps) {
 	const pathSegments = currentPath.split('/').filter(Boolean);
-	const hasSubMenus = menu.children && menu.children.length > 0;
+	const hasSubMenus =
+		menu.children && menu.children.filter((child) => child.isActive).length > 0;
 	const hasContent = contents && contents.length > 0;
 
 	return (
@@ -41,7 +42,7 @@ export default function MenuPageLayout({
 				{hasSubMenus && (
 					<SubMenuSection
 						parentMenu={menu}
-						subMenus={menu.children}
+						subMenus={menu.children.filter((child) => child.isActive)}
 						currentPath={currentPath}
 					/>
 				)}
@@ -49,7 +50,11 @@ export default function MenuPageLayout({
 				{/* Content Section */}
 				{hasContent && (
 					<div className={hasSubMenus ? 'mt-12' : ''}>
-						<ContentGrid contents={contents} menuName={menu.name} />
+						<ContentGrid
+							contents={contents}
+							menuName={menu.name}
+							showFilters={contents.length > 6}
+						/>
 					</div>
 				)}
 
@@ -76,7 +81,33 @@ export default function MenuPageLayout({
 							<p className='mt-1 text-gray-500'>
 								이 페이지의 내용이 곧 업데이트될 예정입니다.
 							</p>
+
+							{/* Show available sub-menus even if inactive */}
+							{menu.children && menu.children.length > 0 && (
+								<div className='mt-4'>
+									<p className='text-sm text-gray-400 mb-2'>
+										사용 가능한 하위 메뉴:
+									</p>
+									<div className='text-sm text-gray-600'>
+										{menu.children.map((child) => child.name).join(', ')}
+									</div>
+								</div>
+							)}
 						</div>
+					</div>
+				)}
+
+				{/* Content Summary for sections with both sub-menus and content */}
+				{hasSubMenus && hasContent && (
+					<div className='mt-12 bg-brand-50 rounded-xl p-6'>
+						<h3 className='text-lg font-semibold text-brand-900 mb-2'>
+							{menu.name} 전체 콘텐츠
+						</h3>
+						<p className='text-brand-700 mb-4'>
+							이 섹션에는 총 {contents.length}개의 콘텐츠가 있습니다. 위의 하위
+							메뉴를 통해 카테고리별로 살펴보거나, 아래에서 전체 콘텐츠를
+							확인하실 수 있습니다.
+						</p>
 					</div>
 				)}
 			</div>

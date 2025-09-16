@@ -1,4 +1,4 @@
-// src/lib/api.ts
+// src/lib/api.ts - Updated with new endpoints
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import {
@@ -90,6 +90,11 @@ class ApiClient {
 		return response.data;
 	}
 
+	async getMenuByPath(path: string): Promise<Menu> {
+		const response = await this.client.get<Menu>(`/menu/by-path/${path}`);
+		return response.data;
+	}
+
 	async createMenu(menuData: Partial<Menu>): Promise<Menu> {
 		const response = await this.client.post<Menu>('/menu', menuData);
 		return response.data;
@@ -114,18 +119,6 @@ class ApiClient {
 		await this.client.patch('/menu/reorder', reorderData);
 	}
 
-	async getMenuByPath(path: string): Promise<Menu> {
-		const response = await this.client.get<Menu>(`/menu/by-path/${path}`);
-		return response.data;
-	}
-
-	async getContentByMenuPath(path: string): Promise<Content[]> {
-		const response = await this.client.get<Content[]>(
-			`/content/by-menu-path/${path}`
-		);
-		return response.data;
-	}
-
 	// Content endpoints
 	async getContents(params?: {
 		type?: ContentType;
@@ -144,6 +137,13 @@ class ApiClient {
 	async getContentsByMenu(menuUrl: string): Promise<Content[]> {
 		const response = await this.client.get<Content[]>(
 			`/content/by-menu/${menuUrl}`
+		);
+		return response.data;
+	}
+
+	async getContentByMenuPath(path: string): Promise<Content[]> {
+		const response = await this.client.get<Content[]>(
+			`/content/by-menu-path/${path}`
 		);
 		return response.data;
 	}
@@ -240,6 +240,45 @@ class ApiClient {
 
 	getDownloadUrl(id: number): string {
 		return `${API_BASE_URL}/upload/download/${id}`;
+	}
+
+	// Search functionality
+	async searchContent(
+		query: string,
+		filters?: {
+			type?: ContentType;
+			menuId?: number;
+			limit?: number;
+		}
+	): Promise<Content[]> {
+		const params = {
+			q: query,
+			...filters,
+		};
+
+		const response = await this.client.get<Content[]>('/content/search', {
+			params,
+		});
+		return response.data;
+	}
+
+	// Statistics
+	async getContentStats(): Promise<{
+		totalContents: number;
+		contentsByType: Record<ContentType, number>;
+		contentsByMenu: Record<string, number>;
+	}> {
+		const response = await this.client.get('/content/stats');
+		return response.data;
+	}
+
+	async getFileStats(): Promise<{
+		totalFiles: number;
+		totalSize: number;
+		categories: Record<string, number>;
+	}> {
+		const response = await this.client.get('/upload/stats');
+		return response.data;
 	}
 }
 
