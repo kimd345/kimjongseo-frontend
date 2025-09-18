@@ -1,4 +1,4 @@
-// CREATE: app/api/upload/route.ts - NEW FILE
+// src/app/api/upload/route.ts - Fixed with proper auth checking
 import { NextRequest, NextResponse } from 'next/server';
 import { SimpleAuth } from '@/lib/auth';
 import { writeFile, mkdir } from 'fs/promises';
@@ -6,7 +6,20 @@ import path from 'path';
 
 export async function POST(request: NextRequest) {
 	try {
-		await SimpleAuth.requireAuth();
+		console.log('Upload request received');
+
+		// Check authentication
+		const authHeader = request.headers.get('authorization');
+		const token = authHeader?.replace('Bearer ', '');
+
+		if (!token) {
+			return NextResponse.json({ error: 'No token provided' }, { status: 401 });
+		}
+
+		const user = await SimpleAuth.verifyToken(token);
+		if (!user) {
+			return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+		}
 
 		const data = await request.formData();
 		const file: File | null = data.get('file') as unknown as File;
@@ -14,6 +27,15 @@ export async function POST(request: NextRequest) {
 		if (!file) {
 			return NextResponse.json({ error: 'No file provided' }, { status: 400 });
 		}
+
+		console.log(
+			'Processing file:',
+			file.name,
+			'Size:',
+			file.size,
+			'Type:',
+			file.type
+		);
 
 		// Create unique filename
 		const timestamp = Date.now();
@@ -37,17 +59,20 @@ export async function POST(request: NextRequest) {
 			'uploads',
 			uploadDir
 		);
+
+		console.log('Creating upload directory:', uploadsPath);
 		await mkdir(uploadsPath, { recursive: true });
 
 		const bytes = await file.arrayBuffer();
 		const buffer = Buffer.from(bytes);
 		const filePath = path.join(uploadsPath, fileName);
 
+		console.log('Writing file to:', filePath);
 		await writeFile(filePath, buffer);
 
 		const fileUrl = `/uploads/${uploadDir}/${fileName}`;
 
-		return NextResponse.json({
+		const result = {
 			success: true,
 			fileName,
 			url: fileUrl,
@@ -55,9 +80,17 @@ export async function POST(request: NextRequest) {
 			size: file.size,
 			type: file.type,
 			category: uploadDir,
-		});
+		};
+
+		console.log('File upload successful:', result);
+		return NextResponse.json(result);
 	} catch (error) {
 		console.error('Upload error:', error);
-		return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+		return NextResponse.json(
+			{
+				error: `Upload failed: ${error.message}`,
+			},
+			{ status: 500 }
+		);
 	}
 }

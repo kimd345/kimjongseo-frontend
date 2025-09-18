@@ -1,4 +1,4 @@
-// 1. UPDATE: src/app/admin/page.tsx - Fix infinite redirect loop
+// src/app/admin/page.tsx - Updated with real content statistics
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,20 +7,38 @@ import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/layout/admin-layout';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import Link from 'next/link';
+import { api } from '@/lib/api';
 import {
 	DocumentTextIcon,
 	FolderIcon,
 	PhotoIcon,
-	Bars3Icon,
 	CogIcon,
 	UsersIcon,
 	HomeIcon,
 	ChartBarIcon,
+	ClockIcon,
+	EyeIcon,
 } from '@heroicons/react/24/outline';
+
+interface DashboardStats {
+	totalContents: number;
+	publishedContents: number;
+	draftContents: number;
+	totalViews: number;
+	recentContents: any[];
+}
 
 export default function AdminDashboard() {
 	const { isAuthenticated, loading, user } = useAuth();
 	const router = useRouter();
+	const [stats, setStats] = useState<DashboardStats>({
+		totalContents: 0,
+		publishedContents: 0,
+		draftContents: 0,
+		totalViews: 0,
+		recentContents: [],
+	});
+	const [statsLoading, setStatsLoading] = useState(true);
 
 	// Don't redirect during render - use useEffect
 	useEffect(() => {
@@ -28,6 +46,55 @@ export default function AdminDashboard() {
 			router.push('/admin/login');
 		}
 	}, [loading, isAuthenticated, router]);
+
+	// Load dashboard statistics
+	useEffect(() => {
+		const loadStats = async () => {
+			if (!isAuthenticated) return;
+
+			try {
+				setStatsLoading(true);
+				const response = await api.getContents();
+
+				let allContents: any[] = [];
+				if (response.content) {
+					// Flatten content from all sections
+					allContents = Object.values(response.content).flat();
+				}
+
+				const publishedContents = allContents.filter(
+					(c) => c.status === 'published'
+				);
+				const draftContents = allContents.filter((c) => c.status === 'draft');
+				const totalViews = allContents.reduce(
+					(sum, c) => sum + (c.viewCount || 0),
+					0
+				);
+
+				// Get recent contents (last 5)
+				const recentContents = allContents
+					.sort(
+						(a, b) =>
+							new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+					)
+					.slice(0, 5);
+
+				setStats({
+					totalContents: allContents.length,
+					publishedContents: publishedContents.length,
+					draftContents: draftContents.length,
+					totalViews,
+					recentContents,
+				});
+			} catch (error) {
+				console.error('Failed to load dashboard stats:', error);
+			} finally {
+				setStatsLoading(false);
+			}
+		};
+
+		loadStats();
+	}, [isAuthenticated]);
 
 	// Show loading while checking auth
 	if (loading) {
@@ -85,7 +152,9 @@ export default function AdminDashboard() {
 							</div>
 							<div className='ml-4'>
 								<p className='text-sm font-medium text-gray-500'>총 게시글</p>
-								<p className='text-2xl font-bold text-gray-900'>0</p>
+								<p className='text-2xl font-bold text-gray-900'>
+									{statsLoading ? '...' : stats.totalContents}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -93,13 +162,13 @@ export default function AdminDashboard() {
 					<div className='bg-white rounded-lg shadow border border-gray-200 p-6'>
 						<div className='flex items-center'>
 							<div className='flex-shrink-0'>
-								<PhotoIcon className='h-8 w-8 text-green-600' />
+								<EyeIcon className='h-8 w-8 text-green-600' />
 							</div>
 							<div className='ml-4'>
-								<p className='text-sm font-medium text-gray-500'>
-									업로드된 파일
+								<p className='text-sm font-medium text-gray-500'>공개 게시글</p>
+								<p className='text-2xl font-bold text-gray-900'>
+									{statsLoading ? '...' : stats.publishedContents}
 								</p>
-								<p className='text-2xl font-bold text-gray-900'>0</p>
 							</div>
 						</div>
 					</div>
@@ -111,7 +180,9 @@ export default function AdminDashboard() {
 							</div>
 							<div className='ml-4'>
 								<p className='text-sm font-medium text-gray-500'>총 조회수</p>
-								<p className='text-2xl font-bold text-gray-900'>0</p>
+								<p className='text-2xl font-bold text-gray-900'>
+									{statsLoading ? '...' : stats.totalViews.toLocaleString()}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -119,11 +190,13 @@ export default function AdminDashboard() {
 					<div className='bg-white rounded-lg shadow border border-gray-200 p-6'>
 						<div className='flex items-center'>
 							<div className='flex-shrink-0'>
-								<UsersIcon className='h-8 w-8 text-orange-600' />
+								<ClockIcon className='h-8 w-8 text-orange-600' />
 							</div>
 							<div className='ml-4'>
-								<p className='text-sm font-medium text-gray-500'>활성 관리자</p>
-								<p className='text-2xl font-bold text-gray-900'>1</p>
+								<p className='text-sm font-medium text-gray-500'>초안</p>
+								<p className='text-2xl font-bold text-gray-900'>
+									{statsLoading ? '...' : stats.draftContents}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -215,15 +288,64 @@ export default function AdminDashboard() {
 						<h2 className='text-lg font-semibold text-gray-900'>최근 활동</h2>
 					</div>
 					<div className='p-6'>
-						<div className='text-center py-8'>
-							<HomeIcon className='mx-auto h-12 w-12 text-gray-400' />
-							<h3 className='mt-2 text-sm font-medium text-gray-900'>
-								활동 내역이 없습니다
-							</h3>
-							<p className='mt-1 text-sm text-gray-500'>
-								게시글을 작성하거나 파일을 업로드하면 여기에 표시됩니다.
-							</p>
-						</div>
+						{statsLoading ? (
+							<div className='text-center py-4'>
+								<LoadingSpinner size='sm' />
+								<p className='mt-2 text-sm text-gray-500'>로딩중...</p>
+							</div>
+						) : stats.recentContents.length > 0 ? (
+							<div className='space-y-4'>
+								{stats.recentContents.map((content) => (
+									<div
+										key={content.id}
+										className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'
+									>
+										<div className='flex-1'>
+											<h4 className='text-sm font-medium text-gray-900'>
+												{content.title}
+											</h4>
+											<p className='text-xs text-gray-500'>
+												{content.section} •{' '}
+												{new Date(content.createdAt).toLocaleDateString(
+													'ko-KR'
+												)}
+											</p>
+										</div>
+										<div className='flex items-center gap-2'>
+											<span
+												className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+													content.status === 'published'
+														? 'bg-green-100 text-green-800'
+														: 'bg-yellow-100 text-yellow-800'
+												}`}
+											>
+												{content.status === 'published' ? '공개' : '초안'}
+											</span>
+											<Link href={`/admin/content/${content.id}`}>
+												<button className='text-brand-600 hover:text-brand-700 text-xs'>
+													수정
+												</button>
+											</Link>
+										</div>
+									</div>
+								))}
+							</div>
+						) : (
+							<div className='text-center py-8'>
+								<HomeIcon className='mx-auto h-12 w-12 text-gray-400' />
+								<h3 className='mt-2 text-sm font-medium text-gray-900'>
+									활동 내역이 없습니다
+								</h3>
+								<p className='mt-1 text-sm text-gray-500'>
+									게시글을 작성하거나 파일을 업로드하면 여기에 표시됩니다.
+								</p>
+								<Link href='/admin/content/new' className='mt-4 inline-block'>
+									<button className='bg-brand-600 text-white px-4 py-2 rounded-md text-sm hover:bg-brand-700 transition-colors'>
+										첫 번째 게시글 작성하기
+									</button>
+								</Link>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

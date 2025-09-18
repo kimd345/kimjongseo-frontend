@@ -24,34 +24,41 @@ export default function ContentDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadContent = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+		const loadContent = async () => {
+			try {
+				setLoading(true);
+				setError(null);
 
-        // Increment view count and get content
-        const response = await fetch(`/api/content/${id}/view`, {
-          method: 'POST'
-        });
+				console.log('Loading content with ID:', id);
 
-        if (response.ok) {
-          const contentData = await response.json();
-          setContent(contentData);
-        } else {
-          setError('콘텐츠를 찾을 수 없습니다.');
-        }
-      } catch (error) {
-        console.error('Failed to load content:', error);
-        setError('콘텐츠를 로드하는 중 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
+				// First, get the content
+				const response = await fetch(`/api/content/${id}`);
 
-    if (id) {
-      loadContent();
-    }
-  }, [id]);
+				if (response.ok) {
+					const contentData = await response.json();
+					setContent(contentData);
+
+					// Then increment view count (only once)
+					fetch(`/api/content/${id}/view`, { method: 'POST' }).catch(
+						console.error
+					);
+				} else {
+					console.error('Content not found, response:', response.status);
+					setError('콘텐츠를 찾을 수 없습니다.');
+				}
+			} catch (error) {
+				console.error('Failed to load content:', error);
+				setError('콘텐츠를 로드하는 중 오류가 발생했습니다.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		if (id) {
+			loadContent();
+		}
+		// Remove 'id' from dependencies to prevent double execution
+	}, []);
 
   if (loading) {
     return (

@@ -1,39 +1,46 @@
-// src/components/admin/ContentEditor.tsx
+// src/components/admin/content-editor.tsx - Fixed for simplified architecture
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { api } from '@/lib/api';
-import { Content, ContentType, PublishStatus, Menu } from '@/types';
+import { FIXED_SECTIONS, hasSubsections } from '@/lib/content-manager';
 import Button from '@/components/ui/button';
-import {
-	PhotoIcon,
-	DocumentIcon,
-	VideoCameraIcon,
-} from '@heroicons/react/24/outline';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
+import FileUpload from './file-upload';
+
 interface ContentEditorProps {
-	initialContent?: Content;
+	initialContent?: any; // Using any for now since we're migrating
 }
 
 interface ContentForm {
 	title: string;
 	content: string;
-	type: ContentType;
-	status: PublishStatus;
+	section: string;
+	type: 'article' | 'announcement' | 'press' | 'academic' | 'video';
+	status: 'draft' | 'published';
 	category?: string;
-	menuId?: number;
 	youtubeId?: string;
 	youtubeUrls?: string;
 	authorName?: string;
 }
 
+// Sections that allow content creation
+const CONTENT_ENABLED_SECTIONS = [
+	'library/press', // 자료실 > 보도자료
+	'library/academic', // 자료실 > 학술 자료
+	'library/archive', // 자료실 > 사진·영상 아카이브
+	'organization/projects', // 기념사업회 > 선양사업
+	'organization/announcements', // 기념사업회 > 공지사항
+	'about-general/sources', // 절재 김종서 장군 > 관련 사료 및 연구
+	'about-general/photos', // 절재 김종서 장군 > 사진·영상 자료
+];
+
 export default function ContentEditor({ initialContent }: ContentEditorProps) {
 	const router = useRouter();
-	const [menus, setMenus] = useState<Menu[]>([]);
-	const [uploading, setUploading] = useState(false);
 	const [saving, setSaving] = useState(false);
 
 	const {
@@ -46,74 +53,85 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 		defaultValues: {
 			title: initialContent?.title || '',
 			content: initialContent?.content || '',
-			type: initialContent?.type || ContentType.ARTICLE,
-			status: initialContent?.status || PublishStatus.DRAFT,
+			section: initialContent?.section || '',
+			type: initialContent?.type || 'article',
+			status: initialContent?.status || 'draft',
 			category: initialContent?.category || '',
-			menuId: initialContent?.menuId,
 			youtubeId: initialContent?.youtubeId || '',
-			youtubeUrls: initialContent?.youtubeUrls?.join('\n') || '',
-			authorName: initialContent?.authorName || '',
+			youtubeUrls: Array.isArray(initialContent?.youtubeUrls)
+				? initialContent.youtubeUrls.join('\n')
+				: initialContent?.youtubeUrls || '',
+			authorName: initialContent?.author || initialContent?.authorName || '',
 		},
 	});
 
 	const watchedType = watch('type');
+	const watchedSection = watch('section');
 
-	useEffect(() => {
-		const loadMenus = async () => {
-			try {
-				const menuData = await api.getMenus();
-				setMenus(menuData);
-			} catch (error) {
-				console.error('Failed to load menus:', error);
+	// Generate section options with proper hierarchy
+	const getSectionOptions = () => {
+		const options: { value: string; label: string; disabled?: boolean }[] = [];
+
+		Object.entries(FIXED_SECTIONS).forEach(([mainKey, mainSection]) => {
+			if (hasSubsections(mainSection)) {
+				Object.entries(mainSection.subsections).forEach(([subKey, subName]) => {
+					const sectionPath = `${mainKey}/${subKey}`;
+					const isEnabled = CONTENT_ENABLED_SECTIONS.includes(sectionPath);
+					options.push({
+						value: sectionPath,
+						label: `${mainSection.name} > ${subName}`,
+						disabled: !isEnabled,
+					});
+				});
+			} else {
+				// For sections without subsections (like contact)
+				options.push({
+					value: mainKey,
+					label: mainSection.name,
+					disabled: true, // Contact page doesn't allow content
+				});
 			}
-		};
-		loadMenus();
-	}, []);
+		});
 
-	const handleFileUpload = async (
-		event: React.ChangeEvent<HTMLInputElement>
+		return options;
+	};
+
+	const handleFileUploaded = (
+		fileUrl: string,
+		fileName: string,
+		isImage: boolean
 	) => {
-		const files = event.target.files;
-		if (!files || files.length === 0) return;
+		const currentContent = watch('content');
+		const fileReference = isImage
+			? `![${fileName}](${fileUrl})`
+			: `[📄 ${fileName}](${fileUrl})`;
 
-		setUploading(true);
-		try {
-			const uploadPromises = Array.from(files).map((file) =>
-				api.uploadFile(file, initialContent?.id, 'content')
-			);
-			const uploadedFiles = await Promise.all(uploadPromises);
-
-			// Insert file references into content
-			const fileReferences = uploadedFiles
-				.map((file) => {
-					if (file.category === 'image') {
-						return `![${file.originalName}](${api.getFileUrl(file.id)})`;
-					} else {
-						return `[${file.originalName}](${api.getDownloadUrl(file.id)})`;
-					}
-				})
-				.join('\n\n');
-
-			const currentContent = watch('content');
-			setValue('content', currentContent + '\n\n' + fileReferences);
-			toast.success(`${files.length}개 파일이 업로드되었습니다.`);
-		} catch (error) {
-			console.error('Failed to upload files:', error);
-			toast.error('파일 업로드에 실패했습니다.');
-		} finally {
-			setUploading(false);
-		}
+		setValue('content', currentContent + '\n\n' + fileReference);
 	};
 
 	const onSubmit = async (data: ContentForm) => {
 		setSaving(true);
 		try {
+			// Validate section selection
+			if (!CONTENT_ENABLED_SECTIONS.includes(data.section)) {
+				toast.error('선택한 섹션에서는 콘텐츠를 생성할 수 없습니다.');
+				return;
+			}
+
+			// Prepare content data - ensure no double escaping
 			const contentData = {
-				...data,
-				youtubeUrls: data.youtubeUrls
-					? data.youtubeUrls.split('\n').filter((url) => url.trim())
-					: undefined,
+				title: data.title,
+				content: data.content, // Keep content as-is, don't escape
+				section: data.section,
+				type: data.type,
+				status: data.status,
+				category: data.category || '',
+				youtubeId: data.youtubeId || '',
+				youtubeUrls: data.youtubeUrls || '',
+				authorName: data.authorName || '',
 			};
+
+			console.log('Submitting content data:', contentData);
 
 			if (initialContent) {
 				await api.updateContent(initialContent.id, contentData);
@@ -132,24 +150,24 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 		}
 	};
 
-	const getTypeLabel = (type: ContentType) => {
+	const getTypeLabel = (type: string) => {
 		switch (type) {
-			case ContentType.ARTICLE:
+			case 'article':
 				return '일반글';
-			case ContentType.ANNOUNCEMENT:
+			case 'announcement':
 				return '공지사항';
-			case ContentType.PRESS_RELEASE:
+			case 'press':
 				return '보도자료';
-			case ContentType.ACADEMIC_MATERIAL:
+			case 'academic':
 				return '학술자료';
-			case ContentType.VIDEO:
+			case 'video':
 				return '영상';
-			case ContentType.PHOTO_GALLERY:
-				return '사진갤러리';
 			default:
 				return type;
 		}
 	};
+
+	const sectionOptions = getSectionOptions();
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
@@ -177,6 +195,42 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 						)}
 					</div>
 
+					{/* Section Selection - Most Important */}
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							게시 섹션 *
+						</label>
+						<select
+							{...register('section', {
+								required: '섹션을 선택해주세요.',
+								validate: (value) =>
+									CONTENT_ENABLED_SECTIONS.includes(value) ||
+									'선택한 섹션에서는 콘텐츠를 생성할 수 없습니다.',
+							})}
+							className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
+						>
+							<option value=''>섹션을 선택하세요</option>
+							{sectionOptions.map((option) => (
+								<option
+									key={option.value}
+									value={option.value}
+									disabled={option.disabled}
+									className={option.disabled ? 'text-gray-400' : ''}
+								>
+									{option.label} {option.disabled ? '(콘텐츠 생성 불가)' : ''}
+								</option>
+							))}
+						</select>
+						{errors.section && (
+							<p className='mt-1 text-sm text-red-600'>
+								{errors.section.message}
+							</p>
+						)}
+						<p className='mt-1 text-xs text-gray-500'>
+							콘텐츠 생성이 가능한 섹션만 선택할 수 있습니다.
+						</p>
+					</div>
+
 					{/* Meta Fields */}
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 						<div>
@@ -187,11 +241,11 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 								{...register('type')}
 								className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
 							>
-								{Object.values(ContentType).map((type) => (
-									<option key={type} value={type}>
-										{getTypeLabel(type)}
-									</option>
-								))}
+								<option value='article'>일반글</option>
+								<option value='announcement'>공지사항</option>
+								<option value='press'>보도자료</option>
+								<option value='academic'>학술자료</option>
+								<option value='video'>영상</option>
 							</select>
 						</div>
 
@@ -203,37 +257,11 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 								{...register('status')}
 								className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
 							>
-								<option value={PublishStatus.DRAFT}>초안</option>
-								<option value={PublishStatus.PUBLISHED}>공개</option>
-								<option value={PublishStatus.PRIVATE}>비공개</option>
+								<option value='draft'>초안</option>
+								<option value='published'>공개</option>
 							</select>
 						</div>
 
-						<div>
-							<label className='block text-sm font-medium text-gray-700 mb-2'>
-								메뉴 연결
-							</label>
-							<select
-								{...register('menuId', {
-									setValueAs: (value) =>
-										value === '' ? undefined : Number(value),
-								})}
-								className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
-							>
-								<option value=''>메뉴 선택</option>
-								{menus.map((menu) => (
-									<option key={menu.id} value={menu.id}>
-										{menu.parent
-											? `${menu.parent.name} > ${menu.name}`
-											: menu.name}
-									</option>
-								))}
-							</select>
-						</div>
-					</div>
-
-					{/* Category and Author */}
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 						<div>
 							<label className='block text-sm font-medium text-gray-700 mb-2'>
 								카테고리
@@ -245,22 +273,23 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 								placeholder='카테고리 (선택사항)'
 							/>
 						</div>
+					</div>
 
-						<div>
-							<label className='block text-sm font-medium text-gray-700 mb-2'>
-								작성자
-							</label>
-							<input
-								{...register('authorName')}
-								type='text'
-								className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
-								placeholder='작성자명 (선택사항)'
-							/>
-						</div>
+					{/* Author */}
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							작성자
+						</label>
+						<input
+							{...register('authorName')}
+							type='text'
+							className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500'
+							placeholder='작성자명 (선택사항)'
+						/>
 					</div>
 
 					{/* YouTube fields for video content */}
-					{watchedType === ContentType.VIDEO && (
+					{watchedType === 'video' && (
 						<div className='space-y-4'>
 							<div>
 								<label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -298,36 +327,13 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 				<div className='px-6 py-4 border-b border-gray-200'>
 					<div className='flex items-center justify-between'>
 						<h2 className='text-lg font-medium text-gray-900'>본문 내용</h2>
-						<div className='flex items-center gap-2'>
-							<label className='cursor-pointer'>
-								<input
-									type='file'
-									multiple
-									accept='image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx'
-									onChange={handleFileUpload}
-									className='hidden'
-								/>
-								<Button
-									type='button'
-									variant='outline'
-									size='sm'
-									disabled={uploading}
-								>
-									{uploading ? (
-										<>업로드 중...</>
-									) : (
-										<>
-											<PhotoIcon className='h-4 w-4' />
-											파일 업로드
-										</>
-									)}
-								</Button>
-							</label>
-						</div>
 					</div>
 				</div>
 
-				<div className='p-6'>
+				<div className='p-6 space-y-4'>
+					{/* File Upload Component */}
+					<FileUpload onFileUploaded={handleFileUploaded} disabled={saving} />
+
 					<textarea
 						{...register('content', { required: '내용을 입력해주세요.' })}
 						rows={20}

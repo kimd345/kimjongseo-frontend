@@ -1,4 +1,4 @@
-// src/app/[...slug]/page.tsx - Complete simplified dynamic routing
+// src/app/[...slug]/page.tsx - Fixed to properly load content from sections
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,11 +7,10 @@ import Link from 'next/link';
 import {
 	ContentItem,
 	FIXED_SECTIONS,
-	SUBSECTION_NAMES,
+	hasSubsections,
 } from '@/lib/content-manager';
 import PublicLayout from '@/components/layout/public-layout';
 import LoadingSpinner from '@/components/ui/loading-spinner';
-import { loadContent, findContentById } from '@/lib/content-manager';
 import { HomeIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 export default function DynamicPage() {
@@ -38,11 +37,50 @@ export default function DynamicPage() {
 					return;
 				}
 
-				// Load content for this section
-				const section = subSection || mainSection;
-				const data = await loadContent();
-				const sectionContent = data[section] || [];
-				setContents(sectionContent);
+				// Load content for this specific section
+				const response = await fetch('/api/content');
+				const data = await response.json();
+
+				let sectionContent: ContentItem[] = [];
+
+				if (subSection) {
+					// Load content for subsection (e.g., "library/press")
+					const subsectionKey = `${mainSection}/${subSection}`;
+					sectionContent = data.content[subsectionKey] || [];
+					console.log(
+						`Loading content for subsection: ${subsectionKey}`,
+						sectionContent
+					);
+				} else {
+					// Load content for main section - aggregate all subsections
+					if (hasSubsections(sectionInfo)) {
+						Object.keys(sectionInfo.subsections).forEach((subKey) => {
+							const subsectionKey = `${mainSection}/${subKey}`;
+							const subsectionContent = data.content[subsectionKey] || [];
+							sectionContent = [...sectionContent, ...subsectionContent];
+						});
+					} else {
+						// For sections without subsections, load directly
+						sectionContent = data.content[mainSection] || [];
+					}
+					console.log(
+						`Loading content for main section: ${mainSection}`,
+						sectionContent
+					);
+				}
+
+				// Filter only published content for public pages
+				const publishedContent = sectionContent.filter(
+					(item) => item.status === 'published'
+				);
+
+				// Sort by creation date (newest first)
+				publishedContent.sort(
+					(a, b) =>
+						new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+				);
+
+				setContents(publishedContent);
 			} catch (error) {
 				console.error('Failed to load page data:', error);
 				setError('페이지를 찾을 수 없습니다.');
@@ -69,9 +107,9 @@ export default function DynamicPage() {
 	}
 
 	const currentSectionName = subSection
-		? sectionInfo.subsections?.[
-				subSection as keyof typeof sectionInfo.subsections
-			] || subSection
+		? hasSubsections(sectionInfo)
+			? sectionInfo.subsections[subSection]
+			: subSection
 		: sectionInfo.name;
 
 	return (
@@ -142,7 +180,7 @@ export default function DynamicPage() {
 			<div className='min-h-screen bg-gray-50 py-8'>
 				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 					{/* Subsection Navigation */}
-					{!subSection && sectionInfo.subsections && (
+					{!subSection && hasSubsections(sectionInfo) && (
 						<div className='mb-12'>
 							<div className='text-center mb-8'>
 								<h2 className='text-2xl font-bold text-gray-900 mb-4'>
@@ -214,10 +252,48 @@ export default function DynamicPage() {
 											</h3>
 
 											<p className='text-gray-600 text-sm mb-4 line-clamp-3'>
-												{content.content
-													.replace(/[#*_`]/g, '')
-													.substring(0, 150)}
-												...
+												{(() => {
+													let preview = content.content || '';
+
+													// Remove markdown headers
+													preview = preview.replace(/^#{1,6}\s+/gm, '');
+
+													// Remove markdown bold/italic
+													preview = preview.replace(/\*\*(.*?)\*\*/g, '$1');
+													preview = preview.replace(/\*(.*?)\*/g, '$1');
+
+													// Remove markdown links
+													preview = preview.replace(
+														/\[([^\]]+)\]\([^)]+\)/g,
+														'$1'
+													);
+
+													// Remove markdown images
+													preview = preview.replace(
+														/!\[([^\]]*)\]\([^)]+\)/g,
+														''
+													);
+
+													// Remove blockquotes
+													preview = preview.replace(/^>\s*/gm, '');
+
+													// Remove list markers
+													preview = preview.replace(/^[-*+]\s+/gm, '');
+													preview = preview.replace(/^\d+\.\s+/gm, '');
+
+													// Replace multiple newlines with spaces
+													preview = preview.replace(/\n+/g, ' ');
+
+													// Remove extra whitespace
+													preview = preview.replace(/\s+/g, ' ').trim();
+
+													// Truncate to 150 characters
+													if (preview.length > 150) {
+														preview = preview.substring(0, 150) + '...';
+													}
+
+													return preview || '내용 미리보기가 없습니다.';
+												})()}
 											</p>
 
 											<div className='flex items-center justify-between text-sm text-gray-500'>
@@ -250,14 +326,16 @@ export default function DynamicPage() {
 									/>
 								</svg>
 								<h3 className='mt-2 text-lg font-medium text-gray-900'>
-									준비 중입니다
+									{subSection ? '콘텐츠가 없습니다' : '준비 중입니다'}
 								</h3>
 								<p className='mt-1 text-gray-500'>
-									이 페이지의 내용이 곧 업데이트될 예정입니다.
+									{subSection
+										? '이 섹션에 등록된 콘텐츠가 아직 없습니다.'
+										: '이 페이지의 내용이 곧 업데이트될 예정입니다.'}
 								</p>
 
 								{/* Show available sub-menus even if no content */}
-								{!subSection && sectionInfo.subsections && (
+								{!subSection && hasSubsections(sectionInfo) && (
 									<div className='mt-4'>
 										<p className='text-sm text-gray-400 mb-2'>
 											사용 가능한 하위 메뉴:
@@ -272,18 +350,20 @@ export default function DynamicPage() {
 					)}
 
 					{/* Content Summary for sections with both sub-menus and content */}
-					{!subSection && sectionInfo.subsections && contents.length > 0 && (
-						<div className='mt-12 bg-brand-50 rounded-xl p-6'>
-							<h3 className='text-lg font-semibold text-brand-900 mb-2'>
-								{sectionInfo.name} 전체 콘텐츠
-							</h3>
-							<p className='text-brand-700 mb-4'>
-								이 섹션에는 총 {contents.length}개의 콘텐츠가 있습니다. 위의
-								하위 메뉴를 통해 카테고리별로 살펴보거나, 위에서 전체 콘텐츠를
-								확인하실 수 있습니다.
-							</p>
-						</div>
-					)}
+					{!subSection &&
+						hasSubsections(sectionInfo) &&
+						contents.length > 0 && (
+							<div className='mt-12 bg-brand-50 rounded-xl p-6'>
+								<h3 className='text-lg font-semibold text-brand-900 mb-2'>
+									{sectionInfo.name} 전체 콘텐츠
+								</h3>
+								<p className='text-brand-700 mb-4'>
+									이 섹션에는 총 {contents.length}개의 콘텐츠가 있습니다. 위의
+									하위 메뉴를 통해 카테고리별로 살펴보거나, 위에서 전체 콘텐츠를
+									확인하실 수 있습니다.
+								</p>
+							</div>
+						)}
 				</div>
 			</div>
 		</PublicLayout>

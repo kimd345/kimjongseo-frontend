@@ -1,4 +1,4 @@
-// src/components/layout/AdminSidebar.tsx
+// src/components/layout/admin-sidebar.tsx - Simplified for current functionality
 'use client';
 
 import Link from 'next/link';
@@ -6,22 +6,17 @@ import { usePathname } from 'next/navigation';
 import {
 	HomeIcon,
 	DocumentTextIcon,
-	FolderIcon,
-	PhotoIcon,
-	Bars3Icon,
+	FolderPlusIcon,
 	CogIcon,
-	UsersIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 const navigation = [
 	{ name: '대시보드', href: '/admin', icon: HomeIcon },
-	{ name: '메뉴 관리', href: '/admin/menu', icon: Bars3Icon },
 	{ name: '게시글 관리', href: '/admin/content', icon: DocumentTextIcon },
-	{ name: '파일 관리', href: '/admin/files', icon: FolderIcon },
-	{ name: '영상 관리', href: '/admin/videos', icon: PhotoIcon },
-	{ name: '사용자 관리', href: '/admin/users', icon: UsersIcon },
-	{ name: '설정', href: '/admin/settings', icon: CogIcon },
+	{ name: '새 게시글', href: '/admin/content/new', icon: FolderPlusIcon },
+	// Remove deprecated items: menu, files, videos, users
+	// { name: '설정', href: '/admin/settings', icon: CogIcon }, // Keep for future
 ];
 
 export default function AdminSidebar() {
@@ -60,6 +55,16 @@ export default function AdminSidebar() {
 						);
 					})}
 				</ul>
+
+				{/* Quick Stats in Sidebar */}
+				<div className='mt-8 p-4 bg-slate-800 rounded-lg'>
+					<h3 className='text-sm font-medium text-slate-300 mb-2'>빠른 정보</h3>
+					<div className='text-xs text-slate-400 space-y-1'>
+						<div>• 파일기반 콘텐츠 관리</div>
+						<div>• JWT 기반 인증</div>
+						<div>• Markdown 지원</div>
+					</div>
+				</div>
 			</nav>
 		</div>
 	);

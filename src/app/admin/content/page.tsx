@@ -1,4 +1,4 @@
-// src/app/admin/content/page.tsx
+// src/app/admin/content/page.tsx - Fixed for simplified architecture
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,7 +6,7 @@ import Link from 'next/link';
 import AdminLayout from '@/components/layout/admin-layout';
 import Button from '@/components/ui/button';
 import { api } from '@/lib/api';
-import { Content, ContentType, PublishStatus } from '@/types';
+import { FIXED_SECTIONS, hasSubsections } from '@/lib/content-manager';
 import {
 	PlusIcon,
 	PencilIcon,
@@ -16,12 +16,26 @@ import {
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
+interface Content {
+	id: string;
+	title: string;
+	content: string;
+	section: string;
+	type: string;
+	status: string;
+	category?: string;
+	viewCount: number;
+	createdAt: string;
+	author?: string;
+}
+
 export default function ContentManagement() {
 	const [contents, setContents] = useState<Content[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [filter, setFilter] = useState<{
-		type?: ContentType;
-		status?: PublishStatus;
+		section?: string;
+		type?: string;
+		status?: string;
 		page: number;
 	}>({ page: 1 });
 	const [total, setTotal] = useState(0);
@@ -33,8 +47,27 @@ export default function ContentManagement() {
 				...filter,
 				limit: 20,
 			});
-			setContents(response.data);
-			setTotal(response.total);
+
+			// Handle different response formats
+			if (response.content) {
+				// New format: { content: { section: [items] } }
+				const allContents: Content[] = [];
+				Object.values(response.content).forEach((sectionContents: any) => {
+					if (Array.isArray(sectionContents)) {
+						allContents.push(...sectionContents);
+					}
+				});
+				setContents(allContents);
+				setTotal(allContents.length);
+			} else if (response.data) {
+				// Paginated format: { data: [...], total: n }
+				setContents(response.data);
+				setTotal(response.total);
+			} else if (Array.isArray(response)) {
+				// Simple array format
+				setContents(response);
+				setTotal(response.length);
+			}
 		} catch (error) {
 			console.error('Failed to load contents:', error);
 			toast.error('게시글을 불러오는데 실패했습니다.');
@@ -47,7 +80,7 @@ export default function ContentManagement() {
 		loadContents();
 	}, [filter]);
 
-	const handleDelete = async (id: number) => {
+	const handleDelete = async (id: string) => {
 		if (!confirm('정말 삭제하시겠습니까?')) return;
 
 		try {
@@ -60,37 +93,67 @@ export default function ContentManagement() {
 		}
 	};
 
-	const getStatusLabel = (status: PublishStatus) => {
+	const getStatusLabel = (status: string) => {
 		switch (status) {
-			case PublishStatus.PUBLISHED:
+			case 'published':
 				return '공개';
-			case PublishStatus.DRAFT:
+			case 'draft':
 				return '초안';
-			case PublishStatus.PRIVATE:
-				return '비공개';
 			default:
 				return status;
 		}
 	};
 
-	const getTypeLabel = (type: ContentType) => {
+	const getTypeLabel = (type: string) => {
 		switch (type) {
-			case ContentType.ARTICLE:
+			case 'article':
 				return '일반글';
-			case ContentType.ANNOUNCEMENT:
+			case 'announcement':
 				return '공지사항';
-			case ContentType.PRESS_RELEASE:
+			case 'press':
 				return '보도자료';
-			case ContentType.ACADEMIC_MATERIAL:
+			case 'academic':
 				return '학술자료';
-			case ContentType.VIDEO:
+			case 'video':
 				return '영상';
-			case ContentType.PHOTO_GALLERY:
-				return '사진갤러리';
 			default:
 				return type;
 		}
 	};
+
+	const getSectionLabel = (section: string) => {
+		const [mainKey, subKey] = section.split('/');
+		const mainSection = FIXED_SECTIONS[mainKey];
+
+		if (!mainSection) return section;
+
+		if (subKey && hasSubsections(mainSection)) {
+			const subName = mainSection.subsections[subKey];
+			return `${mainSection.name} > ${subName}`;
+		}
+
+		return mainSection.name;
+	};
+
+	// Filter options
+	const sectionOptions = Object.entries(FIXED_SECTIONS).flatMap(
+		([mainKey, mainSection]) => {
+			if (hasSubsections(mainSection)) {
+				return Object.entries(mainSection.subsections).map(
+					([subKey, subName]) => ({
+						value: `${mainKey}/${subKey}`,
+						label: `${mainSection.name} > ${subName}`,
+					})
+				);
+			}
+			return [
+				{
+					value: mainKey,
+					label: mainSection.name,
+				},
+			];
+		}
+	);
 
 	return (
 		<AdminLayout>
@@ -111,29 +174,48 @@ export default function ContentManagement() {
 
 				{/* Filters */}
 				<div className='bg-white p-4 rounded-lg shadow border border-gray-200'>
-					<div className='flex items-center gap-4'>
+					<div className='flex items-center gap-4 flex-wrap'>
 						<div className='flex items-center gap-2'>
 							<FunnelIcon className='h-5 w-5 text-gray-400' />
 							<span className='text-sm font-medium text-gray-700'>필터:</span>
 						</div>
 
 						<select
+							value={filter.section || ''}
+							onChange={(e) =>
+								setFilter({
+									...filter,
+									section: e.target.value || undefined,
+									page: 1,
+								})
+							}
+							className='rounded-md border-gray-300 text-sm'
+						>
+							<option value=''>모든 섹션</option>
+							{sectionOptions.map((option) => (
+								<option key={option.value} value={option.value}>
+									{option.label}
+								</option>
+							))}
+						</select>
+
+						<select
 							value={filter.type || ''}
 							onChange={(e) =>
 								setFilter({
 									...filter,
-									type: (e.target.value as ContentType) || undefined,
+									type: e.target.value || undefined,
 									page: 1,
 								})
 							}
 							className='rounded-md border-gray-300 text-sm'
 						>
 							<option value=''>모든 유형</option>
-							{Object.values(ContentType).map((type) => (
-								<option key={type} value={type}>
-									{getTypeLabel(type)}
-								</option>
-							))}
+							<option value='article'>일반글</option>
+							<option value='announcement'>공지사항</option>
+							<option value='press'>보도자료</option>
+							<option value='academic'>학술자료</option>
+							<option value='video'>영상</option>
 						</select>
 
 						<select
@@ -141,19 +223,26 @@ export default function ContentManagement() {
 							onChange={(e) =>
 								setFilter({
 									...filter,
-									status: (e.target.value as PublishStatus) || undefined,
+									status: e.target.value || undefined,
 									page: 1,
 								})
 							}
 							className='rounded-md border-gray-300 text-sm'
 						>
 							<option value=''>모든 상태</option>
-							{Object.values(PublishStatus).map((status) => (
-								<option key={status} value={status}>
-									{getStatusLabel(status)}
-								</option>
-							))}
+							<option value='published'>공개</option>
+							<option value='draft'>초안</option>
 						</select>
+
+						{(filter.section || filter.type || filter.status) && (
+							<Button
+								variant='outline'
+								size='sm'
+								onClick={() => setFilter({ page: 1 })}
+							>
+								필터 초기화
+							</Button>
+						)}
 					</div>
 				</div>
 
@@ -166,7 +255,14 @@ export default function ContentManagement() {
 						</div>
 					) : contents.length === 0 ? (
 						<div className='p-8 text-center'>
-							<p className='text-gray-500'>게시글이 없습니다.</p>
+							<p className='text-gray-500'>
+								{Object.keys(filter).length > 1
+									? '조건에 맞는 게시글이 없습니다.'
+									: '게시글이 없습니다.'}
+							</p>
+							<Link href='/admin/content/new' className='mt-4 inline-block'>
+								<Button>첫 번째 게시글 작성하기</Button>
+							</Link>
 						</div>
 					) : (
 						<div className='overflow-x-auto'>
@@ -175,6 +271,9 @@ export default function ContentManagement() {
 									<tr>
 										<th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
 											제목
+										</th>
+										<th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+											섹션
 										</th>
 										<th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
 											유형
@@ -206,6 +305,11 @@ export default function ContentManagement() {
 													</div>
 												)}
 											</td>
+											<td className='px-6 py-4'>
+												<div className='text-sm text-gray-900'>
+													{getSectionLabel(content.section)}
+												</div>
+											</td>
 											<td className='px-6 py-4 whitespace-nowrap'>
 												<span className='inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800'>
 													{getTypeLabel(content.type)}
@@ -214,11 +318,9 @@ export default function ContentManagement() {
 											<td className='px-6 py-4 whitespace-nowrap'>
 												<span
 													className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-														content.status === PublishStatus.PUBLISHED
+														content.status === 'published'
 															? 'bg-green-100 text-green-800'
-															: content.status === PublishStatus.DRAFT
-																? 'bg-yellow-100 text-yellow-800'
-																: 'bg-gray-100 text-gray-800'
+															: 'bg-yellow-100 text-yellow-800'
 													}`}
 												>
 													{getStatusLabel(content.status)}
@@ -227,7 +329,7 @@ export default function ContentManagement() {
 											<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
 												<div className='flex items-center gap-1'>
 													<EyeIcon className='h-4 w-4' />
-													{content.viewCount}
+													{content.viewCount || 0}
 												</div>
 											</td>
 											<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
@@ -237,8 +339,13 @@ export default function ContentManagement() {
 											</td>
 											<td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
 												<div className='flex items-center justify-end gap-2'>
+													<Link href={`/content/${content.id}`} target='_blank'>
+														<Button variant='ghost' size='sm' title='미리보기'>
+															<EyeIcon className='h-4 w-4' />
+														</Button>
+													</Link>
 													<Link href={`/admin/content/${content.id}`}>
-														<Button variant='ghost' size='sm'>
+														<Button variant='ghost' size='sm' title='수정'>
 															<PencilIcon className='h-4 w-4' />
 														</Button>
 													</Link>
@@ -246,6 +353,7 @@ export default function ContentManagement() {
 														variant='ghost'
 														size='sm'
 														onClick={() => handleDelete(content.id)}
+														title='삭제'
 													>
 														<TrashIcon className='h-4 w-4 text-red-500' />
 													</Button>
@@ -259,33 +367,31 @@ export default function ContentManagement() {
 					)}
 				</div>
 
-				{/* Pagination */}
-				{total > 20 && (
-					<div className='flex items-center justify-between'>
-						<div className='text-sm text-gray-700'>
-							{(filter.page - 1) * 20 + 1}-{Math.min(filter.page * 20, total)} /
-							총 {total}개
-						</div>
-						<div className='flex gap-2'>
-							<Button
-								variant='outline'
-								size='sm'
-								disabled={filter.page === 1}
-								onClick={() => setFilter({ ...filter, page: filter.page - 1 })}
-							>
-								이전
-							</Button>
-							<Button
-								variant='outline'
-								size='sm'
-								disabled={filter.page * 20 >= total}
-								onClick={() => setFilter({ ...filter, page: filter.page + 1 })}
-							>
-								다음
-							</Button>
+				{/* Simple Statistics */}
+				<div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+					<div className='bg-white rounded-lg p-4 border border-gray-200'>
+						<div className='text-sm text-gray-500'>총 게시글</div>
+						<div className='text-2xl font-bold text-gray-900'>{total}</div>
+					</div>
+					<div className='bg-white rounded-lg p-4 border border-gray-200'>
+						<div className='text-sm text-gray-500'>공개 게시글</div>
+						<div className='text-2xl font-bold text-green-600'>
+							{contents.filter((c) => c.status === 'published').length}
 						</div>
 					</div>
-				)}
+					<div className='bg-white rounded-lg p-4 border border-gray-200'>
+						<div className='text-sm text-gray-500'>초안</div>
+						<div className='text-2xl font-bold text-yellow-600'>
+							{contents.filter((c) => c.status === 'draft').length}
+						</div>
+					</div>
+					<div className='bg-white rounded-lg p-4 border border-gray-200'>
+						<div className='text-sm text-gray-500'>총 조회수</div>
+						<div className='text-2xl font-bold text-blue-600'>
+							{contents.reduce((sum, c) => sum + (c.viewCount || 0), 0)}
+						</div>
+					</div>
+				</div>
 			</div>
 		</AdminLayout>
 	);

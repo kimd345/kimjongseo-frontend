@@ -6,17 +6,9 @@ const nextConfig = {
 		domains: ['localhost', 'kimjongseo.org'],
 		formats: ['image/webp', 'image/avif'],
 	},
-	async rewrites() {
-		return [
-			{
-				source: '/api/:path*',
-				destination: 'http://localhost:3001/api/:path*',
-			},
-		];
-	},
 	env: {
 		NEXT_PUBLIC_API_URL:
-			process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+			process.env.NEXT_PUBLIC_API_URL || '/api',
 	},
 };
 
