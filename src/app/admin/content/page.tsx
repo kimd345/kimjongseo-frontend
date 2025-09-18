@@ -1,4 +1,4 @@
-// src/app/admin/content/page.tsx - Fixed admin content list with clean previews
+// src/app/admin/content/page.tsx - Fixed TypeScript error
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -30,6 +30,12 @@ interface Content {
 	author?: string;
 }
 
+interface ApiResponse {
+	content?: Record<string, Content[]>;
+	data?: Content[];
+	total?: number;
+}
+
 export default function ContentManagement() {
 	const [contents, setContents] = useState<Content[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -49,25 +55,27 @@ export default function ContentManagement() {
 				limit: 20,
 			});
 
-			// Handle different response formats
-			if (response.content) {
+			// Handle different response formats with proper typing
+			const typedResponse = response as ApiResponse;
+
+			if (typedResponse.content) {
 				// New format: { content: { section: [items] } }
 				const allContents: Content[] = [];
-				Object.values(response.content).forEach((sectionContents: any) => {
+				Object.values(typedResponse.content).forEach((sectionContents) => {
 					if (Array.isArray(sectionContents)) {
 						allContents.push(...sectionContents);
 					}
 				});
 				setContents(allContents);
 				setTotal(allContents.length);
-			} else if (response.data) {
+			} else if (typedResponse.data) {
 				// Paginated format: { data: [...], total: n }
-				setContents(response.data);
-				setTotal(response.total);
+				setContents(typedResponse.data);
+				setTotal(typedResponse.total || 0);
 			} else if (Array.isArray(response)) {
 				// Simple array format
-				setContents(response);
-				setTotal(response.length);
+				setContents(response as Content[]);
+				setTotal((response as Content[]).length);
 			}
 		} catch (error) {
 			console.error('Failed to load contents:', error);
