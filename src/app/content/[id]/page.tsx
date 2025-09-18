@@ -1,247 +1,295 @@
-// src/app/content/[id]/page.tsx
+// CREATE: src/app/content/[id]/page.tsx - Individual content view page
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { api } from '@/lib/api';
-import { Content, Menu } from '@/types';
+import { ContentItem, FIXED_SECTIONS } from '@/lib/content-manager';
 import PublicLayout from '@/components/layout/public-layout';
-import ContentDetail from '@/components/public/content-detail';
 import LoadingSpinner from '@/components/ui/loading-spinner';
+import ReactMarkdown from 'react-markdown';
 import {
-	ChevronLeftIcon,
-	HomeIcon,
-	ChevronRightIcon,
+  ChevronLeftIcon,
+  HomeIcon,
+  ChevronRightIcon,
+  CalendarIcon,
+  EyeIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 
 export default function ContentDetailPage() {
-	const { id } = useParams();
-	const [content, setContent] = useState<Content | null>(null);
-	const [menus, setMenus] = useState<Menu[]>([]);
-	const [relatedContents, setRelatedContents] = useState<Content[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+  const { id } = useParams();
+  const [content, setContent] = useState<ContentItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-	const contentId = parseInt(id as string);
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-	useEffect(() => {
-		const loadData = async () => {
-			try {
-				setLoading(true);
-				setError(null);
+        // Increment view count and get content
+        const response = await fetch(`/api/content/${id}/view`, {
+          method: 'POST'
+        });
 
-				// Load content and increment view count
-				const [contentData, menusData] = await Promise.all([
-					api.incrementContentView(contentId),
-					api.getMenuTree(),
-				]);
+        if (response.ok) {
+          const contentData = await response.json();
+          setContent(contentData);
+        } else {
+          setError('콘텐츠를 찾을 수 없습니다.');
+        }
+      } catch (error) {
+        console.error('Failed to load content:', error);
+        setError('콘텐츠를 로드하는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-				setContent(contentData);
-				setMenus(menusData);
+    if (id) {
+      loadContent();
+    }
+  }, [id]);
 
-				// Load related content if content has a menu
-				if (contentData.menuId) {
-					try {
-						const relatedData = await api.getContents({
-							menuId: contentData.menuId,
-							limit: 4,
-						});
-						// Filter out the current content
-						const filtered = relatedData.data.filter(
-							(item) => item.id !== contentData.id
-						);
-						setRelatedContents(filtered);
-					} catch (relatedError) {
-						console.error('Failed to load related content:', relatedError);
-						// Don't fail the whole page for related content
-					}
-				}
-			} catch (error) {
-				console.error('Failed to load content:', error);
-				setError('콘텐츠를 찾을 수 없습니다.');
-			} finally {
-				setLoading(false);
-			}
-		};
+  if (loading) {
+    return (
+      <PublicLayout>
+        <div className='min-h-screen flex items-center justify-center'>
+          <LoadingSpinner size='lg' />
+        </div>
+      </PublicLayout>
+    );
+  }
 
-		if (contentId) {
-			loadData();
-		}
-	}, [contentId]);
+  if (error || !content) {
+    notFound();
+  }
 
-	if (loading) {
-		return (
-			<PublicLayout>
-				<div className='min-h-screen flex items-center justify-center'>
-					<LoadingSpinner size='lg' />
-				</div>
-			</PublicLayout>
-		);
-	}
+  // Build breadcrumbs
+  const sectionInfo = FIXED_SECTIONS[content.section as keyof typeof FIXED_SECTIONS];
+  const breadcrumbs = [
+    { name: '홈', href: '/' },
+  ];
 
-	if (error || !content) {
-		notFound();
-	}
+  if (sectionInfo) {
+    breadcrumbs.push({
+      name: sectionInfo.name,
+      href: `/${content.section}`
+    });
+  }
 
-	// Build breadcrumb path
-	const buildBreadcrumbs = () => {
-		const breadcrumbs = [{ name: '홈', href: '/' }];
+  breadcrumbs.push({
+    name: content.title,
+    href: `/content/${content.id}`
+  });
 
-		if (content.menu) {
-			// Add menu breadcrumbs
-			const menuPath = [];
-			let currentMenu = content.menu;
+  return (
+    <PublicLayout>
+      {/* Breadcrumbs */}
+      <div className='bg-white border-b border-gray-200'>
+        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <nav className='flex py-4' aria-label='Breadcrumb'>
+            <ol className='flex items-center space-x-4'>
+              {breadcrumbs.map((breadcrumb, index) => (
+                <li key={breadcrumb.href}>
+                  <div className='flex items-center'>
+                    {index === 0 ? (
+                      <Link
+                        href={breadcrumb.href}
+                        className='text-gray-400 hover:text-gray-500 transition-colors'
+                      >
+                        <HomeIcon className='h-5 w-5' />
+                        <span className='sr-only'>{breadcrumb.name}</span>
+                      </Link>
+                    ) : (
+                      <>
+                        <ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
+                        {index === breadcrumbs.length - 1 ? (
+                          <span className='text-sm font-medium text-gray-900 truncate max-w-60'>
+                            {breadcrumb.name}
+                          </span>
+                        ) : (
+                          <Link
+                            href={breadcrumb.href}
+                            className='text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors truncate max-w-40'
+                          >
+                            {breadcrumb.name}
+                          </Link>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </div>
+      </div>
 
-			// Build path from current menu to root
-			while (currentMenu) {
-				menuPath.unshift(currentMenu);
-				currentMenu = currentMenu.parent;
-			}
+      <div className='min-h-screen bg-gray-50 py-8'>
+        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
+          {/* Back Button */}
+          <div className='mb-6'>
+            <button
+              onClick={() => window.history.back()}
+              className='inline-flex items-center text-brand-600 hover:text-brand-700 transition-colors'
+            >
+              <ChevronLeftIcon className='h-5 w-5 mr-1' />
+              돌아가기
+            </button>
+          </div>
 
-			// Add menu breadcrumbs
-			let currentPath = '';
-			menuPath.forEach((menu) => {
-				currentPath += (currentPath ? '/' : '') + menu.url;
-				breadcrumbs.push({
-					name: menu.name,
-					href: `/${currentPath}`,
-				});
-			});
-		}
+          {/* Content */}
+          <article className='bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden'>
+            {/* Featured Image */}
+            {content.images && content.images[0] && (
+              <div className='relative h-64 md:h-80 bg-gray-200'>
+                <img
+                  src={content.images[0]}
+                  alt={content.title}
+                  className='w-full h-full object-cover'
+                />
+              </div>
+            )}
 
-		breadcrumbs.push({
-			name: content.title,
-			href: `/content/${content.id}`,
-		});
+            <div className='p-6 md:p-8'>
+              {/* Category */}
+              {content.category && (
+                <div className='text-brand-600 font-medium mb-2'>
+                  {content.category}
+                </div>
+              )}
 
-		return breadcrumbs;
-	};
+              {/* Title */}
+              <h1 className='text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight'>
+                {content.title}
+              </h1>
 
-	const breadcrumbs = buildBreadcrumbs();
+              {/* Meta Information */}
+              <div className='flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-200'>
+                <div className='flex items-center gap-1'>
+                  <CalendarIcon className='h-4 w-4' />
+                  {new Date(content.createdAt).toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </div>
+                <div className='flex items-center gap-1'>
+                  <EyeIcon className='h-4 w-4' />
+                  {content.viewCount} 조회
+                </div>
+                {content.author && (
+                  <div className='flex items-center gap-1'>
+                    <UserIcon className='h-4 w-4' />
+                    {content.author}
+                  </div>
+                )}
+              </div>
 
-	return (
-		<PublicLayout menus={menus}>
-			{/* Breadcrumbs */}
-			<div className='bg-white border-b border-gray-200'>
-				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
-					<nav className='flex py-4' aria-label='Breadcrumb'>
-						<ol className='flex items-center space-x-4'>
-							{breadcrumbs.map((breadcrumb, index) => (
-								<li key={breadcrumb.href}>
-									<div className='flex items-center'>
-										{index === 0 ? (
-											<Link
-												href={breadcrumb.href}
-												className='text-gray-400 hover:text-gray-500 transition-colors'
-											>
-												<HomeIcon className='h-5 w-5' />
-												<span className='sr-only'>{breadcrumb.name}</span>
-											</Link>
-										) : (
-											<>
-												<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-												{index === breadcrumbs.length - 1 ? (
-													<span className='text-sm font-medium text-gray-900 truncate max-w-60'>
-														{breadcrumb.name}
-													</span>
-												) : (
-													<Link
-														href={breadcrumb.href}
-														className='text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors truncate max-w-40'
-													>
-														{breadcrumb.name}
-													</Link>
-												)}
-											</>
-										)}
-									</div>
-								</li>
-							))}
-						</ol>
-					</nav>
-				</div>
-			</div>
+              {/* YouTube Video for Video Content */}
+              {content.type === 'video' && content.youtubeId && (
+                <div className='mb-8'>
+                  <div className='relative aspect-video bg-gray-100 rounded-lg overflow-hidden'>
+                    <iframe
+                      src={`https://www.youtube.com/embed/${content.youtubeId}`}
+                      title={content.title}
+                      className='w-full h-full'
+                      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              )}
 
-			<div className='min-h-screen bg-gray-50 py-8'>
-				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
-					{/* Back Button */}
-					<div className='mb-6'>
-						<button
-							onClick={() => window.history.back()}
-							className='inline-flex items-center text-brand-600 hover:text-brand-700 transition-colors'
-						>
-							<ChevronLeftIcon className='h-5 w-5 mr-1' />
-							돌아가기
-						</button>
-					</div>
+              {/* Additional YouTube Videos */}
+              {content.youtubeUrls && content.youtubeUrls.length > 0 && (
+                <div className='mb-8'>
+                  <h3 className='text-lg font-semibold text-gray-900 mb-4'>
+                    관련 영상
+                  </h3>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    {content.youtubeUrls.map((url, index) => {
+                      const videoId = url.match(
+                        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/
+                      )?.[1];
+                      if (!videoId) return null;
 
-					{/* Content Detail */}
-					<ContentDetail content={content} />
+                      return (
+                        <div
+                          key={index}
+                          className='relative aspect-video bg-gray-100 rounded-lg overflow-hidden'
+                        >
+                          <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title={`관련 영상 ${index + 1}`}
+                            className='w-full h-full'
+                            allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                            allowFullScreen
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-					{/* Related Content */}
-					{relatedContents.length > 0 && (
-						<div className='mt-12'>
-							<h2 className='text-2xl font-bold text-gray-900 mb-6'>
-								관련 콘텐츠
-							</h2>
-							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-								{relatedContents.map((relatedContent) => (
-									<Link
-										key={relatedContent.id}
-										href={`/content/${relatedContent.id}`}
-										className='group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow'
-									>
-										{relatedContent.featuredImage && (
-											<div className='relative h-32 bg-gray-200'>
-												<img
-													src={relatedContent.featuredImage}
-													alt={relatedContent.title}
-													className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-200'
-												/>
-											</div>
-										)}
-										<div className='p-4'>
-											{relatedContent.category && (
-												<div className='text-sm text-brand-600 font-medium mb-1'>
-													{relatedContent.category}
-												</div>
-											)}
-											<h3 className='font-semibold text-gray-900 group-hover:text-brand-600 transition-colors line-clamp-2'>
-												{relatedContent.title}
-											</h3>
-											<p className='text-sm text-gray-600 mt-2 line-clamp-2'>
-												{relatedContent.content
-													.replace(/[#*_`]/g, '')
-													.substring(0, 100)}
-												...
-											</p>
-											<div className='text-xs text-gray-500 mt-2'>
-												{new Date(relatedContent.createdAt).toLocaleDateString(
-													'ko-KR'
-												)}
-											</div>
-										</div>
-									</Link>
-								))}
-							</div>
-						</div>
-					)}
+              {/* Content Body */}
+              <div className='prose prose-lg max-w-none'>
+                <ReactMarkdown
+                  components={{
+                    // Custom link handling
+                    a: ({ href, children, ...props }) => (
+                      <a
+                        href={href}
+                        className='text-brand-600 hover:text-brand-700'
+                        target={href?.startsWith('http') ? '_blank' : undefined}
+                        rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        {...props}
+                      >
+                        {children}
+                      </a>
+                    ),
+                    // Custom image handling
+                    img: ({ src, alt, ...props }) => (
+                      <div className='my-6'>
+                        <img
+                          src={src}
+                          alt={alt}
+                          className='w-full rounded-lg shadow-sm'
+                          {...props}
+                        />
+                        {alt && (
+                          <p className='text-sm text-gray-500 text-center mt-2'>
+                            {alt}
+                          </p>
+                        )}
+                      </div>
+                    ),
+                  }}
+                >
+                  {content.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </article>
 
-					{/* Navigation to Menu */}
-					{content.menu && (
-						<div className='mt-12 text-center'>
-							<Link
-								href={`/${content.menu.url}`}
-								className='inline-flex items-center px-6 py-3 border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 rounded-lg font-medium transition-colors'
-							>
-								{content.menu.name} 더 보기
-								<ChevronRightIcon className='ml-2 h-4 w-4' />
-							</Link>
-						</div>
-					)}
-				</div>
-			</div>
-		</PublicLayout>
-	);
+          {/* Navigation back to section */}
+          {sectionInfo && (
+            <div className='mt-12 text-center'>
+              <Link
+                href={`/${content.section}`}
+                className='inline-flex items-center px-6 py-3 border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 rounded-lg font-medium transition-colors'
+              >
+                {sectionInfo.name} 더 보기
+                <ChevronRightIcon className='ml-2 h-4 w-4' />
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </PublicLayout>
+  );
 }

@@ -1,90 +1,58 @@
-// src/types/index.ts
+// UPDATE: src/types/index.ts - Simplified types to match new system
 export interface User {
-	id: number;
 	username: string;
 	role: string;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export interface LoginResponse {
-	access_token: string;
+	token: string;
 	user: User;
 }
 
 export interface Menu {
-	id: number;
+	id: string;
 	name: string;
 	url: string;
 	description?: string;
+	children?: Menu[];
+}
+
+export interface Content {
+	id: string;
+	title: string;
+	content: string;
+	section: string;
+	type: 'article' | 'announcement' | 'press' | 'academic' | 'video';
+	status: 'draft' | 'published';
+	category?: string;
+	publishedAt: string;
+	author?: string;
+	images?: string[];
+	youtubeId?: string;
+	youtubeUrls?: string[];
+	viewCount: number;
 	sortOrder: number;
-	isActive: boolean;
-	parentId?: number;
-	parent?: Menu;
-	children: Menu[];
-	type: string;
-	iconImage?: string;
-	cssClass?: string;
+	createdAt: string;
+	updatedAt: string;
+	menu?: Menu;
 }
 
 export enum ContentType {
 	ARTICLE = 'article',
 	ANNOUNCEMENT = 'announcement',
-	PRESS_RELEASE = 'press_release',
-	ACADEMIC_MATERIAL = 'academic_material',
+	PRESS_RELEASE = 'press',
+	ACADEMIC_MATERIAL = 'academic',
 	VIDEO = 'video',
-	PHOTO_GALLERY = 'photo_gallery',
 }
 
 export enum PublishStatus {
 	DRAFT = 'draft',
 	PUBLISHED = 'published',
-	PRIVATE = 'private',
-}
-
-export interface Content {
-	id: number;
-	title: string;
-	content: string;
-	type: ContentType;
-	status: PublishStatus;
-	category?: string;
-	featuredImage?: string;
-	attachments?: string[];
-	youtubeId?: string;
-	youtubeUrls?: string[];
-	metadata?: any;
-	viewCount: number;
-	sortOrder: number;
-	menu?: Menu;
-	menuId?: number;
-	createdAt: string;
-	updatedAt: string;
-	publishedAt?: string;
-	authorName?: string;
-}
-
-export interface FileUpload {
-	id: number;
-	originalName: string;
-	fileName: string;
-	filePath: string;
-	mimeType: string;
-	fileSize: number;
-	contentId?: number;
-	category: string;
-	uploadedAt: string;
 }
 
 export interface PaginatedResponse<T> {
 	data: T[];
 	total: number;
-	page: number;
-	limit: number;
-}
-
-export interface ApiError {
-	message: string;
-	statusCode: number;
-	error?: string;
+	page?: number;
+	limit?: number;
 }
