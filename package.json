@@ -8,12 +8,13 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"type-check": "tsc --noEmit"
+		"type-check": "tsc --noEmit",
+		"clean": "rm -rf .next out",
+		"reset-content": "rm -f data/content.json && echo '{\"content\":{}}' > data/content.json"
 	},
 	"dependencies": {
 		"@headlessui/react": "^1.7.19",
 		"@heroicons/react": "^2.1.0",
-		"@next/font": "^14.2.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^3.6.0",
 		"framer-motion": "^11.18.2",

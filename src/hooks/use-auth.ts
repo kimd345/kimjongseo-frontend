@@ -1,4 +1,6 @@
-// UPDATE: src/hooks/use-auth.ts - Complete replacement
+// 2. UPDATE: src/hooks/use-auth.ts - CLIENT-SIDE ONLY (React hooks)
+'use client';
+
 import { useState, useEffect } from 'react';
 
 export interface AuthUser {

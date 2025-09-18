@@ -1,4 +1,4 @@
-// UPDATE: src/types/index.ts - Simplified types to match new system
+// 5. UPDATE: src/types/index.ts - Simplified types
 export interface User {
 	username: string;
 	role: string;

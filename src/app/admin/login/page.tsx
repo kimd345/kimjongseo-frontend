@@ -1,4 +1,4 @@
-// src/app/admin/login/page.tsx
+// 3. UPDATE: src/app/admin/login/page.tsx - Prevent redirect loop on login page
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -24,6 +24,7 @@ export default function AdminLogin() {
 		formState: { errors },
 	} = useForm<LoginForm>();
 
+	// Only redirect if already authenticated, not if failed auth
 	useEffect(() => {
 		if (!loading && isAuthenticated) {
 			router.push('/admin');
@@ -33,23 +34,33 @@ export default function AdminLogin() {
 	const onSubmit = async (data: LoginForm) => {
 		setIsSubmitting(true);
 		try {
-			await login(data.username, data.password);
-			toast.success('로그인되었습니다.');
-			router.push('/admin');
+			const success = await login(data.username, data.password);
+			if (success) {
+				toast.success('로그인되었습니다.');
+				// Don't manually redirect - let useEffect handle it
+			} else {
+				toast.error('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
+			}
 		} catch (error: any) {
 			console.error('Login error:', error);
-			toast.error(error.response?.data?.message || '로그인에 실패했습니다.');
+			toast.error('로그인 중 오류가 발생했습니다.');
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
+	// Show loading while checking current auth status
 	if (loading) {
 		return (
 			<div className='min-h-screen flex items-center justify-center'>
 				<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600'></div>
 			</div>
 		);
+	}
+
+	// Don't show login form if already authenticated (will redirect via useEffect)
+	if (isAuthenticated) {
+		return null;
 	}
 
 	return (
