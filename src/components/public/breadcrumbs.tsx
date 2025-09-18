@@ -20,7 +20,7 @@ interface BreadcrumbItem {
 export default function Breadcrumbs({
 	pathSegments,
 	allMenus,
-	currentMenu,
+	// currentMenu,
 }: BreadcrumbsProps) {
 	const buildBreadcrumbs = (): BreadcrumbItem[] => {
 		const breadcrumbs: BreadcrumbItem[] = [

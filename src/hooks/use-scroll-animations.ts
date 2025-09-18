@@ -72,7 +72,7 @@ export function useScrollAnimations() {
 					delay: options?.delay || 0,
 					stagger: options?.stagger || 0.2,
 					scrollTrigger: {
-						trigger: Array.isArray(elements) ? elements[0] : elements,
+						// trigger: Array.isArray(elements) ? elements[0] : elements,
 						start: options?.start || 'top 85%',
 						toggleActions: 'play none none reverse',
 					},

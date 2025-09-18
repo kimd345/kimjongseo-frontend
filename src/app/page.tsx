@@ -18,7 +18,6 @@ import Image from 'next/image';
 import {
 	ChevronRightIcon,
 	ArrowRightIcon,
-	PlayIcon,
 } from '@heroicons/react/24/outline';
 import { MobileOptimizedSection } from '@/components/ui/mobile-optimized-section';
 import {
@@ -75,17 +74,17 @@ export default function HomePage() {
 			const lenis = new Lenis({
 				duration: 1.2,
 				easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-				smooth: true,
+				// smooth: true,
 			});
 
 			lenisRef.current = lenis;
 
 			// Animation frame loop
-			function raf(time: number) {
-				lenis.raf(time);
-				requestAnimationFrame(raf);
-			}
-			requestAnimationFrame(raf);
+			// function raf(time: number) {
+			// 	lenis.raf(time);
+			// 	requestAnimationFrame(raf);
+			// }
+			// requestAnimationFrame(raf);
 
 			// Connect GSAP ScrollTrigger with Lenis
 			lenis.on('scroll', ScrollTrigger.update);
@@ -206,7 +205,7 @@ export default function HomePage() {
 				className='relative flex items-center justify-center overflow-hidden'
 				style={{
 					height: '100vh',
-					height: '100dvh',
+					// height: '100dvh',
 				}}
 			>
 				{/* Background Image */}
