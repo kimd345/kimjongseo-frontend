@@ -1,4 +1,4 @@
-// src/hooks/use-scroll-animations.ts
+// src/hooks/use-scroll-animations.ts - TypeScript-safe version
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
@@ -36,6 +36,7 @@ export function useScrollAnimations() {
 							end: trigger.end,
 							scrub: trigger.scrub || false,
 							toggleActions: trigger.toggleActions || 'play none none reverse',
+							invalidateOnRefresh: true,
 							...trigger,
 						}
 					: undefined,
@@ -49,7 +50,7 @@ export function useScrollAnimations() {
 
 	const createRevealAnimation = useCallback(
 		(
-			elements: string | NodeList | Element[],
+			elements: string,
 			options?: {
 				delay?: number;
 				stagger?: number;
@@ -58,8 +59,19 @@ export function useScrollAnimations() {
 		) => {
 			if (typeof window === 'undefined') return null;
 
+			// Only accept string selectors to avoid TypeScript issues
+			const elementArray = Array.from(
+				document.querySelectorAll<Element>(elements)
+			);
+
+			// Only proceed if elements exist
+			if (elementArray.length === 0) {
+				console.warn(`No elements found for selector: ${elements}`);
+				return null;
+			}
+
 			const tween = gsap.fromTo(
-				elements,
+				elementArray,
 				{
 					y: 50,
 					opacity: 0,
@@ -72,9 +84,10 @@ export function useScrollAnimations() {
 					delay: options?.delay || 0,
 					stagger: options?.stagger || 0.2,
 					scrollTrigger: {
-						// trigger: Array.isArray(elements) ? elements[0] : elements,
+						trigger: elementArray[0],
 						start: options?.start || 'top 85%',
 						toggleActions: 'play none none reverse',
+						invalidateOnRefresh: true,
 					},
 				}
 			);
@@ -95,18 +108,26 @@ export function useScrollAnimations() {
 		) => {
 			if (typeof window === 'undefined') return null;
 
+			const el =
+				typeof element === 'string' ? document.querySelector(element) : element;
+			if (!el) {
+				console.warn(`Element not found for parallax animation: ${element}`);
+				return null;
+			}
+
 			const speed = options?.speed || 0.5;
 			const direction = options?.direction || 'up';
 			const yPercent = direction === 'up' ? -50 * speed : 50 * speed;
 
-			const tween = gsap.to(element, {
+			const tween = gsap.to(el, {
 				yPercent,
 				ease: 'none',
 				scrollTrigger: {
-					trigger: element,
+					trigger: el,
 					start: 'top bottom',
 					end: 'bottom top',
 					scrub: true,
+					invalidateOnRefresh: true,
 				},
 			});
 
@@ -125,6 +146,9 @@ export function useScrollAnimations() {
 			tween.kill();
 		});
 		animationRefs.current.clear();
+		if (typeof window !== 'undefined') {
+			ScrollTrigger.refresh();
+		}
 	}, []);
 
 	useEffect(() => {
@@ -142,20 +166,40 @@ export function useScrollAnimations() {
 // Hook for performance monitoring and reduced motion support
 export function useScrollPerformance() {
 	useEffect(() => {
-		// Check for reduced motion preference
-		const prefersReducedMotion = window.matchMedia(
-			'(prefers-reduced-motion: reduce)'
-		);
+		if (typeof window === 'undefined') return;
 
-		if (prefersReducedMotion.matches) {
-			// Disable complex animations for users who prefer reduced motion
+		// Check for reduced motion preference
+		const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+		const handleReducedMotion = (e: MediaQueryListEvent) => {
+			if (e.matches) {
+				// Disable complex animations for users who prefer reduced motion
+				gsap.globalTimeline.timeScale(0.1);
+				ScrollTrigger.config({
+					ignoreMobileResize: true,
+					autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+				});
+			} else {
+				gsap.globalTimeline.timeScale(1);
+			}
+		};
+
+		// Check initial state
+		if (mediaQuery.matches) {
 			gsap.globalTimeline.timeScale(0.1);
-			ScrollTrigger.config({ ignoreMobileResize: true });
+			ScrollTrigger.config({
+				ignoreMobileResize: true,
+				autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+			});
 		}
+
+		// Listen for changes
+		mediaQuery.addEventListener('change', handleReducedMotion);
 
 		// Performance monitoring
 		let frameCount = 0;
 		let lastTime = performance.now();
+		let rafId: number;
 
 		const checkPerformance = () => {
 			const currentTime = performance.now();
@@ -167,17 +211,27 @@ export function useScrollPerformance() {
 				if (frameCount > 10) {
 					// Reduce animation quality for better performance
 					gsap.globalTimeline.timeScale(0.5);
-					ScrollTrigger.batch(null, { interval: 0.2 }); // Batch updates
+					ScrollTrigger.config({
+						autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+					});
 				}
 			} else {
 				frameCount = Math.max(0, frameCount - 1);
+				if (frameCount === 0) {
+					gsap.globalTimeline.timeScale(1);
+				}
 			}
 
 			lastTime = currentTime;
-			requestAnimationFrame(checkPerformance);
+			rafId = requestAnimationFrame(checkPerformance);
 		};
 
-		requestAnimationFrame(checkPerformance);
+		rafId = requestAnimationFrame(checkPerformance);
+
+		return () => {
+			cancelAnimationFrame(rafId);
+			mediaQuery.removeEventListener('change', handleReducedMotion);
+		};
 	}, []);
 }
 
@@ -197,7 +251,10 @@ export function useIntersectionAnimation() {
 						}
 					});
 				},
-				{ threshold: 0.1, rootMargin: '-20px' }
+				{
+					threshold: 0.1,
+					rootMargin: '-20px',
+				}
 			);
 		}
 

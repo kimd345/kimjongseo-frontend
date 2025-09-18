@@ -1,8 +1,9 @@
-// 1. UPDATE: src/lib/auth.ts - SERVER-SIDE ONLY (remove React hooks)
+// src/lib/auth.ts - Fixed for production
 import { SignJWT, jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(
-	process.env.JWT_SECRET || 'kimjongseo-secret-change-in-production'
+	process.env.JWT_SECRET ||
+		'kimjongseo-secret-change-in-production-' + process.env.NODE_ENV
 );
 
 const ADMIN_CREDENTIALS = {
@@ -21,49 +22,72 @@ export class SimpleAuth {
 		username: string,
 		password: string
 	): Promise<string | null> {
+		console.log('Login attempt:', { username, hasPassword: !!password });
+		console.log('Expected credentials:', {
+			expectedUsername: ADMIN_CREDENTIALS.username,
+			expectedPassword: ADMIN_CREDENTIALS.password,
+		});
+
 		if (
 			username === ADMIN_CREDENTIALS.username &&
 			password === ADMIN_CREDENTIALS.password
 		) {
-			const token = await new SignJWT({
-				username,
-				role: 'admin',
-				loginTime: new Date().toISOString(),
-			})
-				.setProtectedHeader({ alg: 'HS256' })
-				.setExpirationTime('7d')
-				.sign(JWT_SECRET);
+			try {
+				const token = await new SignJWT({
+					username,
+					role: 'admin',
+					loginTime: new Date().toISOString(),
+				})
+					.setProtectedHeader({ alg: 'HS256' })
+					.setExpirationTime('7d')
+					.setIssuedAt()
+					.setSubject(username)
+					.sign(JWT_SECRET);
 
-			return token;
+				console.log('Token generated successfully');
+				return token;
+			} catch (error) {
+				console.error('Token generation failed:', error);
+				return null;
+			}
 		}
+		console.log('Invalid credentials');
 		return null;
 	}
 
 	static async verifyToken(token: string): Promise<AuthUser | null> {
 		try {
+			console.log('Verifying token:', token.substring(0, 20) + '...');
 			const { payload } = await jwtVerify(token, JWT_SECRET);
+			console.log('Token verified successfully:', payload);
 			return payload as unknown as AuthUser;
-		} catch {
+		} catch (error) {
+			console.error('Token verification failed:', error);
 			return null;
 		}
 	}
 
 	static async requireAuth(): Promise<AuthUser> {
-		// This works in API routes
-		const { cookies } = await import('next/headers');
-		const cookieStore = cookies();
-		const token = cookieStore.get('auth-token')?.value;
+		try {
+			// This works in API routes
+			const { cookies } = await import('next/headers');
+			const cookieStore = cookies();
+			const token = cookieStore.get('auth-token')?.value;
 
-		if (!token) {
-			throw new Error('Authentication required');
+			if (!token) {
+				throw new Error('Authentication required - no token');
+			}
+
+			const user = await this.verifyToken(token);
+			if (!user) {
+				throw new Error('Invalid token');
+			}
+
+			return user;
+		} catch (error) {
+			console.error('Auth requirement failed:', error);
+			throw error;
 		}
-
-		const user = await this.verifyToken(token);
-		if (!user) {
-			throw new Error('Invalid token');
-		}
-
-		return user;
 	}
 
 	// Client-side token management (for browser only)
@@ -80,6 +104,6 @@ export class SimpleAuth {
 	static removeToken(): void {
 		if (typeof window === 'undefined') return;
 		document.cookie =
-			'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+			'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=lax';
 	}
 }
