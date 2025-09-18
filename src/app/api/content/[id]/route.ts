@@ -114,7 +114,7 @@ export async function PUT(
 			// Handle youtubeUrls properly
 			youtubeUrls:
 				updates.youtubeUrls && typeof updates.youtubeUrls === 'string'
-					? updates.youtubeUrls.split('\n').filter((url) => url.trim())
+					? updates.youtubeUrls.split('\n').filter((url: any) => url.trim())
 					: updates.youtubeUrls || result.content.youtubeUrls || [],
 		};
 
@@ -179,7 +179,7 @@ export async function DELETE(
 						try {
 							await fs.unlink(fullPath);
 							console.log('Deleted image file:', fullPath);
-						} catch (error) {
+						} catch (error: any) {
 							console.warn(
 								'Failed to delete image file:',
 								fullPath,
@@ -200,7 +200,7 @@ export async function DELETE(
 			success: true,
 			message: 'Content deleted successfully',
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error('DELETE content error:', error);
 		return NextResponse.json(
 			{ error: `Failed to delete content: ${error.message}` },

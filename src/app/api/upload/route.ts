@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
 		console.log('File upload successful:', result);
 		return NextResponse.json(result);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Upload error:', error);
 		return NextResponse.json(
 			{

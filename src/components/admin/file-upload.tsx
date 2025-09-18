@@ -40,7 +40,7 @@ export default function FileUpload({
 		if (!files || files.length === 0) return;
 
 		setUploading(true);
-		const newUploadedFiles = [];
+		const newUploadedFiles: any = [];
 
 		try {
 			for (const file of Array.from(files)) {
@@ -81,7 +81,7 @@ export default function FileUpload({
 
 			setUploadedFiles((prev) => [...prev, ...newUploadedFiles]);
 			toast.success(`${files.length}개 파일이 업로드되었습니다.`);
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Failed to upload files:', error);
 			toast.error(`파일 업로드에 실패했습니다: ${error.message}`);
 		} finally {

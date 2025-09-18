@@ -128,8 +128,8 @@ export async function POST(request: NextRequest) {
 		) {
 			newContent.youtubeUrls = contentItem.youtubeUrls
 				.split('\n')
-				.filter((url) => url.trim())
-				.map((url) => url.trim());
+				.filter((url: any) => url.trim())
+				.map((url: any) => url.trim());
 		}
 
 		data.content[sectionKey].push(newContent);
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
 
 		console.log('Content created successfully:', newContent.id);
 		return NextResponse.json(newContent);
-	} catch (error) {
+	} catch (error: any) {
 		console.error('POST content error:', error);
 		return NextResponse.json(
 			{ error: `Failed to create content: ${error.message}` },

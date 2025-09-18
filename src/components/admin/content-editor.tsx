@@ -1,13 +1,12 @@
 // src/components/admin/content-editor.tsx - Fixed for simplified architecture
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { api } from '@/lib/api';
 import { FIXED_SECTIONS, hasSubsections } from '@/lib/content-manager';
 import Button from '@/components/ui/button';
-import { PhotoIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
 import FileUpload from './file-upload';
@@ -66,7 +65,7 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 	});
 
 	const watchedType = watch('type');
-	const watchedSection = watch('section');
+	// const watchedSection = watch('section');
 
 	// Generate section options with proper hierarchy
 	const getSectionOptions = () => {
@@ -134,10 +133,10 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 			console.log('Submitting content data:', contentData);
 
 			if (initialContent) {
-				await api.updateContent(initialContent.id, contentData);
+				await api.updateContent(initialContent.id, contentData as any);
 				toast.success('게시글이 수정되었습니다.');
 			} else {
-				await api.createContent(contentData);
+				await api.createContent(contentData as any);
 				toast.success('게시글이 생성되었습니다.');
 			}
 
@@ -150,22 +149,22 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 		}
 	};
 
-	const getTypeLabel = (type: string) => {
-		switch (type) {
-			case 'article':
-				return '일반글';
-			case 'announcement':
-				return '공지사항';
-			case 'press':
-				return '보도자료';
-			case 'academic':
-				return '학술자료';
-			case 'video':
-				return '영상';
-			default:
-				return type;
-		}
-	};
+	// const getTypeLabel = (type: string) => {
+	// 	switch (type) {
+	// 		case 'article':
+	// 			return '일반글';
+	// 		case 'announcement':
+	// 			return '공지사항';
+	// 		case 'press':
+	// 			return '보도자료';
+	// 		case 'academic':
+	// 			return '학술자료';
+	// 		case 'video':
+	// 			return '영상';
+	// 		default:
+	// 			return type;
+	// 	}
+	// };
 
 	const sectionOptions = getSectionOptions();
 
