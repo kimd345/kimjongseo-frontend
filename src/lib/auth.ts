@@ -42,7 +42,7 @@ export class SimpleAuth {
 	static async verifyToken(token: string): Promise<AuthUser | null> {
 		try {
 			const { payload } = await jwtVerify(token, JWT_SECRET);
-			return payload as AuthUser;
+			return payload as unknown as AuthUser;
 		} catch {
 			return null;
 		}

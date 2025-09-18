@@ -274,6 +274,7 @@ export default function HomePage() {
 						{...section}
 						index={index}
 						isReversed={index % 2 === 1}
+						subsections={section.subsections || undefined}
 					/>
 				))}
 			</div>
@@ -298,7 +299,7 @@ export default function HomePage() {
 						</div>
 
 						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
-							{recentContents.map((content, index) => (
+							{recentContents.map((content) => (
 								<Link
 									key={content.id}
 									href={`/content/${content.id}`}
