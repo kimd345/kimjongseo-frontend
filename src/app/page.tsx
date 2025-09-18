@@ -1,4 +1,4 @@
-// 2. UPDATE: src/app/page.tsx - Fix homepage to safely handle subsections
+// src/app/page.tsx - Fixed with clean content preview
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,6 +7,7 @@ import {
 	FIXED_SECTIONS,
 	hasSubsections,
 } from '@/lib/content-manager';
+import { cleanMarkdownForPreview } from '@/lib/content-utils';
 import Link from 'next/link';
 import PublicLayout from '@/components/layout/public-layout';
 
@@ -153,10 +154,7 @@ export default function HomePage() {
 												{content.title}
 											</h3>
 											<p className='text-gray-600 text-sm mb-4 line-clamp-3'>
-												{content.content
-													.replace(/[#*_`]/g, '')
-													.substring(0, 100)}
-												...
+												{cleanMarkdownForPreview(content.content, 100)}
 											</p>
 											<div className='flex items-center justify-between text-sm text-gray-500'>
 												<span>

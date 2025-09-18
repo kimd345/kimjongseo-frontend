@@ -1,4 +1,4 @@
-// src/app/[...slug]/page.tsx - Fixed to properly load content from sections
+// src/app/[...slug]/page.tsx - Fixed with clean content preview
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,6 +9,7 @@ import {
 	FIXED_SECTIONS,
 	hasSubsections,
 } from '@/lib/content-manager';
+import { cleanMarkdownForPreview } from '@/lib/content-utils';
 import PublicLayout from '@/components/layout/public-layout';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { HomeIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -252,48 +253,7 @@ export default function DynamicPage() {
 											</h3>
 
 											<p className='text-gray-600 text-sm mb-4 line-clamp-3'>
-												{(() => {
-													let preview = content.content || '';
-
-													// Remove markdown headers
-													preview = preview.replace(/^#{1,6}\s+/gm, '');
-
-													// Remove markdown bold/italic
-													preview = preview.replace(/\*\*(.*?)\*\*/g, '$1');
-													preview = preview.replace(/\*(.*?)\*/g, '$1');
-
-													// Remove markdown links
-													preview = preview.replace(
-														/\[([^\]]+)\]\([^)]+\)/g,
-														'$1'
-													);
-
-													// Remove markdown images
-													preview = preview.replace(
-														/!\[([^\]]*)\]\([^)]+\)/g,
-														''
-													);
-
-													// Remove blockquotes
-													preview = preview.replace(/^>\s*/gm, '');
-
-													// Remove list markers
-													preview = preview.replace(/^[-*+]\s+/gm, '');
-													preview = preview.replace(/^\d+\.\s+/gm, '');
-
-													// Replace multiple newlines with spaces
-													preview = preview.replace(/\n+/g, ' ');
-
-													// Remove extra whitespace
-													preview = preview.replace(/\s+/g, ' ').trim();
-
-													// Truncate to 150 characters
-													if (preview.length > 150) {
-														preview = preview.substring(0, 150) + '...';
-													}
-
-													return preview || '내용 미리보기가 없습니다.';
-												})()}
+												{cleanMarkdownForPreview(content.content, 150)}
 											</p>
 
 											<div className='flex items-center justify-between text-sm text-gray-500'>

@@ -1,4 +1,4 @@
-// src/app/admin/content/page.tsx - Fixed for simplified architecture
+// src/app/admin/content/page.tsx - Fixed admin content list with clean previews
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,6 +6,7 @@ import Link from 'next/link';
 import AdminLayout from '@/components/layout/admin-layout';
 import Button from '@/components/ui/button';
 import { api } from '@/lib/api';
+import { cleanMarkdownForPreview } from '@/lib/content-utils';
 import { FIXED_SECTIONS, hasSubsections } from '@/lib/content-manager';
 import {
 	PlusIcon,
@@ -270,7 +271,7 @@ export default function ContentManagement() {
 								<thead className='bg-gray-50'>
 									<tr>
 										<th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-											제목
+											제목 & 미리보기
 										</th>
 										<th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
 											섹션
@@ -296,14 +297,19 @@ export default function ContentManagement() {
 									{contents.map((content) => (
 										<tr key={content.id} className='hover:bg-gray-50'>
 											<td className='px-6 py-4'>
-												<div className='text-sm font-medium text-gray-900'>
-													{content.title}
-												</div>
-												{content.category && (
-													<div className='text-sm text-gray-500'>
-														{content.category}
+												<div>
+													<div className='text-sm font-medium text-gray-900 mb-1'>
+														{content.title}
 													</div>
-												)}
+													{content.category && (
+														<div className='text-xs text-brand-600 font-medium mb-1'>
+															{content.category}
+														</div>
+													)}
+													<div className='text-xs text-gray-500 line-clamp-2 max-w-md'>
+														{cleanMarkdownForPreview(content.content, 120)}
+													</div>
+												</div>
 											</td>
 											<td className='px-6 py-4'>
 												<div className='text-sm text-gray-900'>
