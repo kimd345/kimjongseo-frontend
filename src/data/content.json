@@ -1,41 +1,38 @@
-// CREATE: data/content.json - NEW FILE (initial content)
-/*
 {
-  "content": {
-    "life": [
-      {
-        "id": "kim-early-life-default",
-        "title": "김종서 장군의 어린 시절과 성장 배경",
-        "content": "# 김종서 장군의 어린 시절\n\n절재(節齋) 김종서(金宗瑞, 1383~1453)는 조선 전기의 문신이자 무신으로, 고구려 유민의 후손입니다.\n\n## 출생과 가문\n\n김종서는 1383년(우왕 9년) 강원도 회양에서 태어났습니다. 그의 아버지는 김진으로, 고려 말의 문신이었습니다.\n\n## 청년기의 학문 정진\n\n어려서부터 총명하였던 김종서는 성리학을 깊이 연구하였으며, 특히 군사학에 뛰어난 재능을 보였습니다.\n\n> \"어려서부터 학문에 힘써 문무를 겸비한 인재로 성장하였다\" - 조선왕조실록\n\n## 과거 급제와 관직 진출\n\n1405년(태종 5년) 문과에 급제하여 관직에 나아갔으며, 이후 다양한 관직을 역임하며 경험을 쌓았습니다.",
-        "section": "life",
-        "type": "article", 
-        "status": "published",
-        "category": "생애사",
-        "publishedAt": "2024-01-15T10:00:00.000Z",
-        "author": "김종서장군기념사업회",
-        "viewCount": 0,
-        "sortOrder": 1,
-        "createdAt": "2024-01-15T10:00:00.000Z",
-        "updatedAt": "2024-01-15T10:00:00.000Z"
-      }
-    ],
-    "announcements": [
-      {
-        "id": "welcome-message-default",
-        "title": "새로운 홈페이지를 오픈했습니다",
-        "content": "# 새로운 홈페이지 오픈\n\n김종서장군기념사업회의 새로운 홈페이지가 오픈했습니다.\n\n## 주요 개선사항\n\n- 모던한 디자인과 사용자 경험\n- 모바일 친화적인 반응형 웹사이트\n- 빠른 로딩 속도와 최적화된 성능\n- 체계적인 콘텐츠 관리 시스템\n\n앞으로도 더 나은 서비스를 위해 노력하겠습니다.\n\n감사합니다.",
-        "section": "announcements",
-        "type": "announcement",
-        "status": "published", 
-        "category": "일반공지",
-        "publishedAt": "2024-01-15T10:00:00.000Z",
-        "author": "김종서장군기념사업회",
-        "viewCount": 0,
-        "sortOrder": 1,
-        "createdAt": "2024-01-15T10:00:00.000Z",
-        "updatedAt": "2024-01-15T10:00:00.000Z"
-      }
-    ]
-  }
+	"content": {
+		"life": [
+			{
+				"id": "kim-early-life-default",
+				"title": "김종서 장군의 어린 시절과 성장 배경",
+				"content": "# 김종서 장군의 어린 시절\n\n절재(節齋) 김종서(金宗瑞, 1383~1453)는 조선 전기의 문신이자 무신으로, 고구려 유민의 후손입니다.\n\n## 출생과 가문\n\n김종서는 1383년(우왕 9년) 강원도 회양에서 태어났습니다. 그의 아버지는 김진으로, 고려 말의 문신이었습니다.\n\n## 청년기의 학문 정진\n\n어려서부터 총명하였던 김종서는 성리학을 깊이 연구하였으며, 특히 군사학에 뛰어난 재능을 보였습니다.\n\n> \"어려서부터 학문에 힘써 문무를 겸비한 인재로 성장하였다\" - 조선왕조실록\n\n## 과거 급제와 관직 진출\n\n1405년(태종 5년) 문과에 급제하여 관직에 나아갔으며, 이후 다양한 관직을 역임하며 경험을 쌓았습니다.",
+				"section": "life",
+				"type": "article",
+				"status": "published",
+				"category": "생애사",
+				"publishedAt": "2024-01-15T10:00:00.000Z",
+				"author": "김종서장군기념사업회",
+				"viewCount": 0,
+				"sortOrder": 1,
+				"createdAt": "2024-01-15T10:00:00.000Z",
+				"updatedAt": "2024-01-15T10:00:00.000Z"
+			}
+		],
+		"announcements": [
+			{
+				"id": "welcome-message-default",
+				"title": "새로운 홈페이지를 오픈했습니다",
+				"content": "# 새로운 홈페이지 오픈\n\n김종서장군기념사업회의 새로운 홈페이지가 오픈했습니다.\n\n## 주요 개선사항\n\n- 모던한 디자인과 사용자 경험\n- 모바일 친화적인 반응형 웹사이트\n- 빠른 로딩 속도와 최적화된 성능\n- 체계적인 콘텐츠 관리 시스템\n\n앞으로도 더 나은 서비스를 위해 노력하겠습니다.\n\n감사합니다.",
+				"section": "announcements",
+				"type": "announcement",
+				"status": "published",
+				"category": "일반공지",
+				"publishedAt": "2024-01-15T10:00:00.000Z",
+				"author": "김종서장군기념사업회",
+				"viewCount": 0,
+				"sortOrder": 1,
+				"createdAt": "2024-01-15T10:00:00.000Z",
+				"updatedAt": "2024-01-15T10:00:00.000Z"
+			}
+		]
+	}
 }
-*/

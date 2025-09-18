@@ -1,11 +1,16 @@
-// src/app/not-found.tsx
 'use client';
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { api } from '@/lib/api';
-import { Menu } from '@/types';
 import PublicLayout from '@/components/layout/public-layout';
+
+// Define Menu interface locally to avoid imports
+interface Menu {
+	id: string;
+	name: string;
+	url: string;
+	description?: string;
+}
 
 export default function NotFound() {
 	const [menus, setMenus] = useState<Menu[]>([]);
@@ -13,8 +18,18 @@ export default function NotFound() {
 	useEffect(() => {
 		const loadMenus = async () => {
 			try {
-				const menusData = await api.getMenuTree();
-				setMenus(menusData);
+				// Use fixed sections instead of API call
+				const fixedMenus = [
+					{
+						id: 'about-general',
+						name: '절재 김종서 장군',
+						url: 'about-general',
+					},
+					{ id: 'organization', name: '기념사업회', url: 'organization' },
+					{ id: 'library', name: '자료실', url: 'library' },
+					{ id: 'contact', name: '연락처 & 오시는 길', url: 'contact' },
+				];
+				setMenus(fixedMenus);
 			} catch (error) {
 				console.error('Failed to load menus:', error);
 			}
@@ -24,7 +39,7 @@ export default function NotFound() {
 	}, []);
 
 	return (
-		<PublicLayout menus={menus}>
+		<PublicLayout>
 			<div className='min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
 				<div className='max-w-md w-full text-center'>
 					<div className='mb-8'>

@@ -1,6 +1,4 @@
-// src/lib/content-manager.ts - NEW FILE
-// This replaces the complex database + API system
-
+// 1. UPDATE: src/lib/content-manager.ts - Fix type definitions
 export interface ContentItem {
 	id: string;
 	title: string;
@@ -20,8 +18,15 @@ export interface ContentItem {
 	updatedAt: string;
 }
 
-// Fixed site structure - no more dynamic menus
-export const FIXED_SECTIONS = {
+// Define section type with optional subsections
+interface SectionInfo {
+	name: string;
+	description: string;
+	subsections?: Record<string, string>; // Optional subsections
+}
+
+// Fixed site structure - contact has no subsections
+export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 	'about-general': {
 		name: '절재 김종서 장군',
 		description:
@@ -56,113 +61,38 @@ export const FIXED_SECTIONS = {
 	contact: {
 		name: '연락처 & 오시는 길',
 		description: '기념사업회 위치와 연락처 정보를 안내합니다.',
+		// No subsections - will be hard-coded page
 	},
 };
 
-// Content management class
-export class ContentManager {
-	// Get all content or by section
-	static async getContent(params?: {
-		section?: string;
-		status?: 'draft' | 'published';
-		type?: string;
-		limit?: number;
-	}): Promise<{ data: ContentItem[]; total: number }> {
-		const queryString = new URLSearchParams();
-		if (params?.section) queryString.set('section', params.section);
-		if (params?.status) queryString.set('status', params.status);
-		if (params?.type) queryString.set('type', params.type);
-		if (params?.limit) queryString.set('limit', params.limit.toString());
+// Helper function to check if section has subsections
+export function hasSubsections(
+	section: SectionInfo
+): section is SectionInfo & { subsections: Record<string, string> } {
+	return 'subsections' in section && section.subsections !== undefined;
+}
 
-		const response = await fetch(`/api/content?${queryString}`);
+// Client-side functions for loading content
+export async function loadContent(): Promise<Record<string, ContentItem[]>> {
+	try {
+		const response = await fetch('/api/content');
 		const data = await response.json();
-
-		const allContent = params?.section
-			? data.content[params.section] || []
-			: Object.values(data.content || {}).flat();
-
-		const filteredContent = allContent.filter((item: ContentItem) => {
-			if (params?.status && item.status !== params.status) return false;
-			if (params?.type && item.type !== params.type) return false;
-			return true;
-		});
-
-		const limitedContent = params?.limit
-			? filteredContent.slice(0, params.limit)
-			: filteredContent;
-
-		return {
-			data: limitedContent,
-			total: filteredContent.length,
-		};
+		return data.content || {};
+	} catch (error) {
+		console.error('Failed to load content:', error);
+		return {};
 	}
+}
 
-	// Get content by ID
-	static async getContentById(id: string): Promise<ContentItem | null> {
+export async function findContentById(id: string): Promise<ContentItem | null> {
+	try {
 		const response = await fetch(`/api/content/${id}`);
-		return response.ok ? response.json() : null;
-	}
-
-	// Create new content
-	static async createContent(
-		content: Partial<ContentItem>
-	): Promise<ContentItem> {
-		const response = await fetch('/api/content', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(content),
-		});
-		return response.json();
-	}
-
-	// Update existing content
-	static async updateContent(
-		id: string,
-		updates: Partial<ContentItem>
-	): Promise<ContentItem> {
-		const response = await fetch(`/api/content/${id}`, {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(updates),
-		});
-		return response.json();
-	}
-
-	// Delete content
-	static async deleteContent(id: string): Promise<void> {
-		await fetch(`/api/content/${id}`, { method: 'DELETE' });
-	}
-
-	// Increment view count
-	static async incrementViewCount(id: string): Promise<ContentItem> {
-		const response = await fetch(`/api/content/${id}/view`, { method: 'POST' });
-		return response.json();
-	}
-
-	// Upload file
-	static async uploadFile(
-		file: File
-	): Promise<{ url: string; originalName: string; type: string }> {
-		const formData = new FormData();
-		formData.append('file', file);
-
-		const response = await fetch('/api/upload', {
-			method: 'POST',
-			body: formData,
-		});
-		return response.json();
-	}
-
-	// Get section info
-	static getSectionInfo(sectionId: string) {
-		return FIXED_SECTIONS[sectionId as keyof typeof FIXED_SECTIONS];
-	}
-
-	// Get all sections for navigation
-	static getAllSections() {
-		return Object.entries(FIXED_SECTIONS).map(([id, section]) => ({
-			id,
-			...section,
-		}));
+		if (response.ok) {
+			return await response.json();
+		}
+		return null;
+	} catch (error) {
+		console.error('Failed to find content by ID:', error);
+		return null;
 	}
 }
