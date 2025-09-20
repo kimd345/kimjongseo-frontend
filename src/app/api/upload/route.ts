@@ -1,8 +1,7 @@
-// src/app/api/upload/route.ts - Fixed with proper auth checking
+// src/app/api/upload/route.ts - Updated to use Storage instead of fs
 import { NextRequest, NextResponse } from 'next/server';
 import { SimpleAuth } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { Storage } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -40,8 +39,8 @@ export async function POST(request: NextRequest) {
 		// Create unique filename
 		const timestamp = Date.now();
 		const randomString = Math.random().toString(36).substring(2, 15);
-		const fileExtension = path.extname(file.name);
-		const fileName = `${timestamp}-${randomString}${fileExtension}`;
+		const fileExtension = file.name.split('.').pop() || '';
+		const fileName = `${timestamp}-${randomString}.${fileExtension}`;
 
 		// Determine upload directory based on file type
 		let uploadDir = 'general';
@@ -53,24 +52,8 @@ export async function POST(request: NextRequest) {
 			uploadDir = 'documents';
 		}
 
-		const uploadsPath = path.join(
-			process.cwd(),
-			'public',
-			'uploads',
-			uploadDir
-		);
-
-		console.log('Creating upload directory:', uploadsPath);
-		await mkdir(uploadsPath, { recursive: true });
-
-		const bytes = await file.arrayBuffer();
-		const buffer = Buffer.from(bytes);
-		const filePath = path.join(uploadsPath, fileName);
-
-		console.log('Writing file to:', filePath);
-		await writeFile(filePath, buffer);
-
-		const fileUrl = `/uploads/${uploadDir}/${fileName}`;
+		// Upload using Storage abstraction
+		const fileUrl = await Storage.uploadFile(file, fileName, uploadDir);
 
 		const result = {
 			success: true,

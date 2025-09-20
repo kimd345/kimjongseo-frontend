@@ -9,8 +9,7 @@
 		"start": "next start",
 		"lint": "next lint",
 		"type-check": "tsc --noEmit",
-		"clean": "rm -rf .next out",
-		"reset-content": "rm -f data/content.json && echo '{\"content\":{}}' > data/content.json"
+		"clean": "rm -rf .next out"
 	},
 	"dependencies": {
 		"@headlessui/react": "^1.7.19",

@@ -1,26 +1,7 @@
-// src/app/api/content/[id]/route.ts - Fixed with proper error handling
+// src/app/api/content/[id]/route.ts - Updated to use Storage instead of fs
 import { NextRequest, NextResponse } from 'next/server';
 import { SimpleAuth } from '@/lib/auth';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const CONTENT_FILE = path.join(process.cwd(), 'data', 'content.json');
-
-async function loadContent() {
-	try {
-		const data = await fs.readFile(CONTENT_FILE, 'utf8');
-		return JSON.parse(data);
-	} catch (error) {
-		console.log('Content file not found, creating default structure');
-		return { content: {} };
-	}
-}
-
-async function saveContent(content: any) {
-	const dataDir = path.dirname(CONTENT_FILE);
-	await fs.mkdir(dataDir, { recursive: true });
-	await fs.writeFile(CONTENT_FILE, JSON.stringify(content, null, 2));
-}
+import { Storage } from '@/lib/storage';
 
 async function findContentById(id: string, data: any) {
 	console.log('Looking for content with ID:', id);
@@ -46,7 +27,7 @@ export async function GET(
 ) {
 	try {
 		console.log('GET request for content ID:', params.id);
-		const data = await loadContent();
+		const data = await Storage.loadContent();
 		const result = await findContentById(params.id, data);
 
 		if (!result) {
@@ -87,7 +68,7 @@ export async function PUT(
 		const updates = await request.json();
 		console.log('Updating content with:', updates);
 
-		const data = await loadContent();
+		const data = await Storage.loadContent();
 		const result = await findContentById(params.id, data);
 
 		if (!result) {
@@ -119,7 +100,7 @@ export async function PUT(
 		};
 
 		data.content[result.section][result.index] = updatedContent;
-		await saveContent(data);
+		await Storage.saveContent(data);
 
 		console.log('Content updated successfully');
 		return NextResponse.json(updatedContent);
@@ -152,7 +133,7 @@ export async function DELETE(
 			return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
 		}
 
-		const data = await loadContent();
+		const data = await Storage.loadContent();
 		const result = await findContentById(params.id, data);
 
 		if (!result) {
@@ -174,15 +155,14 @@ export async function DELETE(
 					const urlMatch = match.match(/\((\/uploads\/[^)]+)\)/);
 					if (urlMatch) {
 						const imagePath = urlMatch[1];
-						const fullPath = path.join(process.cwd(), 'public', imagePath);
 
 						try {
-							await fs.unlink(fullPath);
-							console.log('Deleted image file:', fullPath);
+							await Storage.deleteFile(imagePath);
+							console.log('Deleted image file:', imagePath);
 						} catch (error: any) {
 							console.warn(
 								'Failed to delete image file:',
-								fullPath,
+								imagePath,
 								error.message
 							);
 						}
@@ -193,7 +173,7 @@ export async function DELETE(
 
 		// Remove the content from the array
 		data.content[result.section].splice(result.index, 1);
-		await saveContent(data);
+		await Storage.saveContent(data);
 
 		console.log('Content deleted successfully');
 		return NextResponse.json({

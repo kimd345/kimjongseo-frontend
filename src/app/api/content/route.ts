@@ -1,26 +1,7 @@
-// src/app/api/content/route.ts - Fixed to properly handle section mapping
+// src/app/api/content/route.ts - Updated to use Storage instead of fs
 import { NextRequest, NextResponse } from 'next/server';
 import { SimpleAuth } from '@/lib/auth';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const CONTENT_FILE = path.join(process.cwd(), 'data', 'content.json');
-
-async function loadContent() {
-	try {
-		const data = await fs.readFile(CONTENT_FILE, 'utf8');
-		return JSON.parse(data);
-	} catch (error) {
-		console.log('Creating new content file');
-		return { content: {} };
-	}
-}
-
-async function saveContent(content: any) {
-	const dataDir = path.dirname(CONTENT_FILE);
-	await fs.mkdir(dataDir, { recursive: true });
-	await fs.writeFile(CONTENT_FILE, JSON.stringify(content, null, 2));
-}
+import { Storage } from '@/lib/storage';
 
 export async function GET(request: NextRequest) {
 	try {
@@ -30,7 +11,7 @@ export async function GET(request: NextRequest) {
 
 		console.log('GET content request - section:', section, 'status:', status);
 
-		const data = await loadContent();
+		const data = await Storage.loadContent();
 		let content = data.content || {};
 
 		if (section) {
@@ -76,7 +57,7 @@ export async function POST(request: NextRequest) {
 		const contentItem = await request.json();
 		console.log('Creating content item:', contentItem);
 
-		const data = await loadContent();
+		const data = await Storage.loadContent();
 
 		if (!data.content) data.content = {};
 
@@ -133,7 +114,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		data.content[sectionKey].push(newContent);
-		await saveContent(data);
+		await Storage.saveContent(data);
 
 		console.log('Content created successfully:', newContent.id);
 		return NextResponse.json(newContent);

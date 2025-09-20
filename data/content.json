@@ -1,109 +1,23 @@
 {
   "content": {
-    "library/archive": [
-      {
-        "title": "testtest",
-        "content": "\n\n![home-6.jpg](/uploads/images/1758248484101-h7gpojy3n4.jpg)\n\n# 김종서 장군의 어린 시절\n\n절재(節齋) 김종서(金宗瑞, 1383~1453)는 조선 전기의 문신이자 무신으로, 고구려 유민의 후손입니다.\n\n## 출생과 가문\n\n김종서는 1383년(우왕 9년) 강원도 회양에서 태어났습니다. 그의 아버지는 김진으로, 고려 말의 문신이었습니다.\n\n## 청년기의 학문 정진\n\n어려서부터 총명하였던 김종서는 성리학을 깊이 연구하였으며, 특히 군사학에 뛰어난 재능을 보였습니다.\n\n> \"어려서부터 학문에 힘써 문무를 겸비한 인재로 성장하였다\" - 조선왕조실록\n\n## 과거 급제와 관직 진출\n\n1405년(태종 5년) 문과에 급제하여 관직에 나아갔으며, 이후 다양한 관직을 역임하며 경험을 쌓았습니다.",
-        "section": "library/archive",
-        "type": "article",
-        "status": "published",
-        "category": "",
-        "youtubeId": "",
-        "youtubeUrls": [],
-        "authorName": "",
-        "id": "content-1758248525285-55hn0hti9",
-        "createdAt": "2025-09-19T02:22:05.285Z",
-        "updatedAt": "2025-09-19T02:22:27.397Z",
-        "publishedAt": "2025-09-19T02:22:05.285Z",
-        "viewCount": 1,
-        "author": "관리자"
-      }
-    ],
-    "library/press": [
-      {
-        "id": "test-press-1",
-        "title": "김종서 장군 기념관 개관식",
-        "content": "# 김종서 장군 기념관 개관식\n\n2024년 3월 15일, 김종서 장군 기념관이 정식으로 개관했습니다.\n\n## 주요 전시물\n\n- 김종서 장군의 생애를 다룬 영상\n- 당시 사용된 무기와 갑옷\n- 역사적 문서와 편지\n\n기념관은 매주 화요일부터 일요일까지 운영됩니다.",
-        "section": "library/press",
-        "type": "press",
-        "status": "published",
-        "category": "기념관 소식",
-        "publishedAt": "2024-03-15T10:00:00.000Z",
-        "author": "김종서장군기념사업회",
-        "viewCount": 51,
-        "createdAt": "2024-03-15T10:00:00.000Z",
-        "updatedAt": "2025-09-18T06:56:18.949Z"
-      }
-    ],
-    "library/academic": [
-      {
-        "id": "test-academic-1",
-        "title": "조선 전기 김종서의 군사적 업적에 관한 연구",
-        "content": "# 조선 전기 김종서의 군사적 업적에 관한 연구\n\n## 서론\n\n절재 김종서(1383-1453)는 조선 전기의 대표적인 문신이자 무장으로서...\n\n## 본론\n\n### 1. 6진 개척과 북방 경영\n\n김종서는 세종 대왕의 명을 받아 함경도 지역의 6진을 개척하였다.\n\n### 2. 군사 제도의 정비\n\n- 진관 체제의 확립\n- 군사 훈련 체계 정비\n- 무기 개발과 보급\n\n## 결론\n\n김종서의 군사적 업적은 조선 전기 국방력 강화에 결정적 역할을 했다.",
-        "section": "library/academic",
-        "type": "academic",
-        "status": "published",
-        "category": "학술논문",
-        "publishedAt": "2024-02-20T10:00:00.000Z",
-        "author": "박역사 교수",
-        "viewCount": 165,
-        "createdAt": "2024-02-20T10:00:00.000Z",
-        "updatedAt": "2025-09-18T07:15:21.898Z"
-      }
-    ],
-    "organization/announcements": [
-      {
-        "id": "test-announcement-1",
-        "title": "2024년 정기총회 개최 안내",
-        "content": "# 2024년 정기총회 개최 안내\n\n김종서장군기념사업회 회원 여러분께 알려드립니다.\n\n## 일시 및 장소\n\n- **일시**: 2024년 4월 20일 (토) 오후 2시\n- **장소**: 서울시 중구 김종서기념관 대강당\n\n## 안건\n\n1. 2023년 사업 보고 및 결산 승인\n2. 2024년 사업 계획 및 예산 승인\n3. 임원 개선\n4. 기타 안건\n\n## 참석 신청\n\n참석을 원하시는 회원께서는 4월 15일까지 사무국으로 연락 바랍니다.\n\n**연락처**: 02-1234-5678",
-        "section": "organization/announcements",
-        "type": "announcement",
-        "status": "published",
-        "category": "총회",
-        "publishedAt": "2024-03-25T10:00:00.000Z",
-        "author": "사무국",
-        "viewCount": 103,
-        "createdAt": "2024-03-25T10:00:00.000Z",
-        "updatedAt": "2025-09-18T07:57:38.372Z"
-      }
-    ],
-    "about-general/photos": [
-      {
-        "title": "제발좀",
-        "content": "# 새로운 홈페이지 오픈\n\n김종서장군기념사업회의 새로운 홈페이지가 오픈했습니다.\n\n## 주요 개선사항\n\n- 모던한 디자인과 사용자 경험\n- 모바일 친화적인 반응형 웹사이트\n- 빠른 로딩 속도와 최적화된 성능\n- 체계적인 콘텐츠 관리 시스템\n\n앞으로도 더 나은 서비스를 위해 노력하겠습니다.\n\n감사합니다.\n\n![Screenshot 2025-09-13 at 7.08.12 PM.png](/uploads/images/1758180409501-fn6d3hsrnsv.png)\n\n제발좀 되자 얘들아",
-        "section": "about-general/photos",
-        "type": "article",
-        "status": "published",
-        "category": "카테고리다",
-        "youtubeId": "",
-        "youtubeUrls": [],
-        "authorName": "김동혁",
-        "id": "content-1758180457032-87tfusl4g",
-        "createdAt": "2025-09-18T07:27:37.032Z",
-        "updatedAt": "2025-09-18T07:35:10.283Z",
-        "viewCount": 2,
-        "author": "김동혁"
-      }
-    ],
     "about-general/sources": [
       {
-        "title": "test 3",
-        "content": "# 김종서 장군의 어린 시절\n\n절재(節齋) 김종서(金宗瑞, 1383~1453)는 조선 전기의 문신이자 무신으로, 고구려 유민의 후손입니다.\n\n## 출생과 가문\n\n김종서는 1383년(우왕 9년) 강원도 회양에서 태어났습니다. 그의 아버지는 김진으로, 고려 말의 문신이었습니다.\n\n## 청년기의 학문 정진\n\n어려서부터 총명하였던 김종서는 성리학을 깊이 연구하였으며, 특히 군사학에 뛰어난 재능을 보였습니다.\n\n> \"어려서부터 학문에 힘써 문무를 겸비한 인재로 성장하였다\" - 조선왕조실록\n\n## 과거 급제와 관직 진출\n\n1405년(태종 5년) 문과에 급제하여 관직에 나아갔으며, 이후 다양한 관직을 역임하며 경험을 쌓았습니다.\n\n김동혁이다\n\n![6.jpg](/uploads/images/1758180257218-xkqelqsui4l.jpg)",
+        "title": "test",
+        "content": "hi\n\n![4.jpg](/uploads/images/1758357599325-jyvea9tinj.jpg)",
         "section": "about-general/sources",
         "type": "article",
         "status": "published",
         "category": "",
         "youtubeId": "",
-        "authorName": "관리자",
-        "id": "content-1758176977346-dnaukibok",
-        "createdAt": "2025-09-18T06:29:37.346Z",
-        "updatedAt": "2025-09-18T07:24:37.152Z",
-        "publishedAt": "2025-09-18T06:29:37.346Z",
-        "viewCount": 19,
-        "author": "관리자",
-        "youtubeUrls": []
+        "youtubeUrls": [],
+        "authorName": "김동혁",
+        "id": "content-1758357607231-8r58sywt1",
+        "createdAt": "2025-09-20T08:40:07.231Z",
+        "updatedAt": "2025-09-20T08:40:07.231Z",
+        "publishedAt": "2025-09-20T08:40:07.231Z",
+        "viewCount": 0,
+        "author": "김동혁"
       }
-    ],
-    "organization/projects": []
+    ]
   }
 }
