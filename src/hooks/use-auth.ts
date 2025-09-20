@@ -1,4 +1,4 @@
-// src/hooks/use-auth.ts - Fixed with better error handling
+// src/hooks/use-auth.ts - Fixed for production deployment
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -87,15 +87,26 @@ export function useAuth() {
 			});
 
 			if (response.ok && data.success) {
-				// Cookie should be set by the server, but let's verify
+				// Check if cookie was set by server
 				const cookieSet = document.cookie.includes('auth-token=');
 				console.log('Cookie set after login:', cookieSet);
 
+				// Fixed fallback cookie setting for production
 				if (!cookieSet && data.token) {
-					// Fallback: set cookie manually if server didn't set it
 					console.log('Setting cookie manually as fallback');
+					const isProduction = window.location.protocol === 'https:';
 					const maxAge = 7 * 24 * 60 * 60; // 7 days in seconds
-					document.cookie = `auth-token=${data.token}; path=/; max-age=${maxAge}; samesite=lax`;
+
+					const cookieString = `auth-token=${data.token}; path=/; max-age=${maxAge}; samesite=lax${
+						isProduction ? '; secure' : ''
+					}`;
+
+					document.cookie = cookieString;
+					console.log('Fallback cookie set:', cookieString);
+
+					// Verify cookie was actually set
+					const cookieVerify = document.cookie.includes('auth-token=');
+					console.log('Cookie verification after manual set:', cookieVerify);
 				}
 
 				setUser(data.user);
@@ -114,12 +125,17 @@ export function useAuth() {
 	const logout = () => {
 		console.log('Logging out...');
 		// Remove cookie with all possible variations
+		const isProduction = window.location.protocol === 'https:';
+
+		// Standard removal
 		document.cookie =
 			'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=lax';
-		document.cookie =
-			'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=lax; secure';
-		document.cookie =
-			'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+		// Production removal with secure flag
+		if (isProduction) {
+			document.cookie =
+				'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=lax; secure';
+		}
 
 		setUser(null);
 		setIsAuthenticated(false);

@@ -1,6 +1,24 @@
 {
   "content": {
-    "library/archive": [],
+    "library/archive": [
+      {
+        "title": "testtest",
+        "content": "\n\n![home-6.jpg](/uploads/images/1758248484101-h7gpojy3n4.jpg)\n\n# 김종서 장군의 어린 시절\n\n절재(節齋) 김종서(金宗瑞, 1383~1453)는 조선 전기의 문신이자 무신으로, 고구려 유민의 후손입니다.\n\n## 출생과 가문\n\n김종서는 1383년(우왕 9년) 강원도 회양에서 태어났습니다. 그의 아버지는 김진으로, 고려 말의 문신이었습니다.\n\n## 청년기의 학문 정진\n\n어려서부터 총명하였던 김종서는 성리학을 깊이 연구하였으며, 특히 군사학에 뛰어난 재능을 보였습니다.\n\n> \"어려서부터 학문에 힘써 문무를 겸비한 인재로 성장하였다\" - 조선왕조실록\n\n## 과거 급제와 관직 진출\n\n1405년(태종 5년) 문과에 급제하여 관직에 나아갔으며, 이후 다양한 관직을 역임하며 경험을 쌓았습니다.",
+        "section": "library/archive",
+        "type": "article",
+        "status": "published",
+        "category": "",
+        "youtubeId": "",
+        "youtubeUrls": [],
+        "authorName": "",
+        "id": "content-1758248525285-55hn0hti9",
+        "createdAt": "2025-09-19T02:22:05.285Z",
+        "updatedAt": "2025-09-19T02:22:27.397Z",
+        "publishedAt": "2025-09-19T02:22:05.285Z",
+        "viewCount": 1,
+        "author": "관리자"
+      }
+    ],
     "library/press": [
       {
         "id": "test-press-1",
@@ -86,24 +104,6 @@
         "youtubeUrls": []
       }
     ],
-    "organization/projects": [
-      {
-        "title": "test pls",
-        "content": "야야야!!\n\n\n\n![Screenshot 2025-09-13 at 7.08.39 PM.png](/uploads/images/1758180953230-lvgnwyad3eh.png)\n\n# 새로운 홈페이지 오픈\n\n김종서장군기념사업회의 새로운 홈페이지가 오픈했습니다.\n\n## 주요 개선사항\n\n- 모던한 디자인과 사용자 경험\n- 모바일 친화적인 반응형 웹사이트\n- 빠른 로딩 속도와 최적화된 성능\n- 체계적인 콘텐츠 관리 시스템\n\n앞으로도 더 나은 서비스를 위해 노력하겠습니다.\n\n감사합니다.",
-        "section": "organization/projects",
-        "type": "academic",
-        "status": "published",
-        "category": "총회",
-        "youtubeId": "",
-        "youtubeUrls": [],
-        "authorName": "김동혁",
-        "id": "content-1758180970098-40wbx1icm",
-        "createdAt": "2025-09-18T07:36:10.098Z",
-        "updatedAt": "2025-09-18T07:57:33.412Z",
-        "publishedAt": "2025-09-18T07:36:10.098Z",
-        "viewCount": 8,
-        "author": "김동혁"
-      }
-    ]
+    "organization/projects": []
   }
 }

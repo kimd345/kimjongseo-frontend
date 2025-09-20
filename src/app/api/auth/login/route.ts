@@ -1,4 +1,4 @@
-// src/app/api/auth/login/route.ts - Fixed with proper error handling and cookies
+// src/app/api/auth/login/route.ts - Fixed for production deployment
 import { NextRequest, NextResponse } from 'next/server';
 import { SimpleAuth } from '@/lib/auth';
 
@@ -35,18 +35,16 @@ export async function POST(request: NextRequest) {
 				},
 			});
 
-			// Set secure cookie for production
+			// Fixed cookie settings for production
 			const isProduction = process.env.NODE_ENV === 'production';
-			const cookieOptions = [
-				`auth-token=${token}`,
-				'path=/',
-				'max-age=604800', // 7 days
-				'samesite=lax',
-				...(isProduction ? ['secure', 'httponly'] : []),
-			].join('; ');
 
-			response.headers.set('Set-Cookie', cookieOptions);
-			console.log('Cookie set with options:', cookieOptions);
+			// Set cookie with proper production settings - don't set domain for Vercel
+			const cookieValue = `auth-token=${token}; Path=/; Max-Age=604800; SameSite=Lax${
+				isProduction ? '; Secure' : ''
+			}`;
+
+			response.headers.set('Set-Cookie', cookieValue);
+			console.log('Cookie set with value:', cookieValue);
 
 			return response;
 		} else {
