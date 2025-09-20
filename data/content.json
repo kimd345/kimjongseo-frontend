@@ -1,23 +1,5 @@
 {
   "content": {
-    "about-general/sources": [
-      {
-        "title": "testytest",
-        "content": "Dan Kim!!!\n\n![home-6.jpg](https://raw.githubusercontent.com/kimd345/kimjongseo-frontend/main/public/uploads/images/1758359890211-umob8gootpc.jpg)",
-        "section": "about-general/sources",
-        "type": "article",
-        "status": "published",
-        "category": "",
-        "youtubeId": "",
-        "youtubeUrls": [],
-        "authorName": "김동혁",
-        "id": "content-1758359902305-f1y985ec3",
-        "createdAt": "2025-09-20T09:18:22.305Z",
-        "updatedAt": "2025-09-20T09:18:22.305Z",
-        "publishedAt": "2025-09-20T09:18:22.305Z",
-        "viewCount": 0,
-        "author": "김동혁"
-      }
-    ]
+    "about-general/sources": []
   }
 }
