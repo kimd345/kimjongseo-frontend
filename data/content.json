@@ -1,23 +1,5 @@
 {
   "content": {
-    "about-general/sources": [
-      {
-        "title": "test",
-        "content": "hi\n\n![4.jpg](/uploads/images/1758357599325-jyvea9tinj.jpg)",
-        "section": "about-general/sources",
-        "type": "article",
-        "status": "published",
-        "category": "",
-        "youtubeId": "",
-        "youtubeUrls": [],
-        "authorName": "김동혁",
-        "id": "content-1758357607231-8r58sywt1",
-        "createdAt": "2025-09-20T08:40:07.231Z",
-        "updatedAt": "2025-09-20T08:40:07.231Z",
-        "publishedAt": "2025-09-20T08:40:07.231Z",
-        "viewCount": 0,
-        "author": "김동혁"
-      }
-    ]
+    "about-general/sources": []
   }
 }
