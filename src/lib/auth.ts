@@ -8,7 +8,7 @@ const JWT_SECRET = new TextEncoder().encode(
 
 const ADMIN_CREDENTIALS = {
 	username: process.env.ADMIN_USERNAME || 'admin',
-	password: process.env.ADMIN_PASSWORD || 'admin123!',
+	password: process.env.ADMIN_PASSWORD || '1110',
 };
 
 export interface AuthUser {

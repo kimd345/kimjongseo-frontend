@@ -1,4 +1,4 @@
-// 1. UPDATE: src/lib/content-manager.ts - Fix type definitions
+// src/lib/content-manager.ts - Updated with reorganized sections
 export interface ContentItem {
 	id: string;
 	title: string;
@@ -25,7 +25,7 @@ interface SectionInfo {
 	subsections?: Record<string, string>; // Optional subsections
 }
 
-// Fixed site structure - contact has no subsections
+// Updated site structure with reorganized subsections
 export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 	'about-general': {
 		name: '절재 김종서 장군',
@@ -34,8 +34,8 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 		subsections: {
 			life: '생애 및 업적',
 			significance: '역사적 의의',
-			sources: '관련 사료 및 연구',
-			photos: '사진·영상 자료',
+			// Removed: sources (moved to library)
+			// Removed: photos (removed completely)
 		},
 	},
 	organization: {
@@ -46,7 +46,7 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 			chairman: '회장 인사말',
 			history: '연혁',
 			projects: '선양사업',
-			announcements: '공지사항',
+			// Removed: announcements (moved to library)
 		},
 	},
 	library: {
@@ -56,6 +56,8 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 			press: '보도자료',
 			academic: '학술 자료·연구 보고서',
 			archive: '사진·영상 아카이브',
+			sources: '관련 사료 및 연구', // Moved from about-general
+			announcements: '공지사항', // Moved from organization
 		},
 	},
 	contact: {

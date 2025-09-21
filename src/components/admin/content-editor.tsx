@@ -1,4 +1,4 @@
-// src/components/admin/content-editor.tsx - Fixed for simplified architecture
+// src/components/admin/content-editor.tsx - Updated section options
 'use client';
 
 import { useState } from 'react';
@@ -27,15 +27,17 @@ interface ContentForm {
 	authorName?: string;
 }
 
-// Sections that allow content creation
+// Updated sections that allow content creation - reorganized
 const CONTENT_ENABLED_SECTIONS = [
 	'library/press', // 자료실 > 보도자료
 	'library/academic', // 자료실 > 학술 자료
 	'library/archive', // 자료실 > 사진·영상 아카이브
+	'library/sources', // 자료실 > 관련 사료 및 연구 (moved from about-general)
+	'library/announcements', // 자료실 > 공지사항 (moved from organization)
 	'organization/projects', // 기념사업회 > 선양사업
-	'organization/announcements', // 기념사업회 > 공지사항
-	'about-general/sources', // 절재 김종서 장군 > 관련 사료 및 연구
-	'about-general/photos', // 절재 김종서 장군 > 사진·영상 자료
+	'about-general/life', // 절재 김종서 장군 > 생애 및 업적
+	'about-general/significance', // 절재 김종서 장군 > 역사적 의의
+	// Removed: about-general/photos (삭제됨)
 ];
 
 export default function ContentEditor({ initialContent }: ContentEditorProps) {
@@ -67,7 +69,7 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 	const watchedType = watch('type');
 	// const watchedSection = watch('section');
 
-	// Generate section options with proper hierarchy
+	// Generate section options with proper hierarchy - updated with new structure
 	const getSectionOptions = () => {
 		const options: { value: string; label: string; disabled?: boolean }[] = [];
 
@@ -148,23 +150,6 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 			setSaving(false);
 		}
 	};
-
-	// const getTypeLabel = (type: string) => {
-	// 	switch (type) {
-	// 		case 'article':
-	// 			return '일반글';
-	// 		case 'announcement':
-	// 			return '공지사항';
-	// 		case 'press':
-	// 			return '보도자료';
-	// 		case 'academic':
-	// 			return '학술자료';
-	// 		case 'video':
-	// 			return '영상';
-	// 		default:
-	// 			return type;
-	// 	}
-	// };
 
 	const sectionOptions = getSectionOptions();
 

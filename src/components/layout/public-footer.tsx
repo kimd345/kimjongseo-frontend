@@ -24,9 +24,12 @@ export default function PublicFooter() {
 					<div>
 						<h4 className='text-lg font-semibold mb-4'>연락처</h4>
 						<div className='space-y-2 text-gray-300'>
-							<p>전화: 02-000-0000</p>
-							<p>이메일: info@kimjongseo.org</p>
-							<p>주소: 서울특별시 ○○구 ○○로 00</p>
+							<p>전화: 603-82-13329</p>
+							{/* <p>이메일: jykim0614@hotmail.com</p> */}
+							<p>
+								재단 찾아오시는 길 주소:<br/>
+								서울 중구 남대문로7길 29 복창빌딩 904호
+							</p>
 						</div>
 					</div>
 
@@ -90,7 +93,9 @@ export default function PublicFooter() {
 						&copy; {new Date().getFullYear()} 김종서장군기념사업회. All rights
 						reserved.
 					</p>
-					<p className='mt-2'>대표자: 성명 | 고유번호: 000-00-00000</p>
+					<p className='mt-2'>
+						기념사업회 대표자: 김진연 | 고유번호: 603-82-13329
+					</p>
 				</div>
 			</div>
 		</footer>

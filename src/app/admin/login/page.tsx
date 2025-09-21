@@ -136,10 +136,6 @@ export default function AdminLogin() {
 						로그인
 					</Button>
 				</form>
-
-				<div className='text-center'>
-					<p className='text-xs text-gray-500'>기본 계정: admin / admin123!</p>
-				</div>
 			</div>
 		</div>
 	);
