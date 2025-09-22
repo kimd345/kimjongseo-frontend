@@ -126,11 +126,11 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 		name: '자료실',
 		description: '김종서 장군과 관련된 각종 자료와 연구 성과를 제공합니다.',
 		subsections: {
+			announcements: '공지사항', // Moved from organization
 			press: '보도자료',
 			academic: '학술 자료·연구 보고서',
 			archive: '사진·영상 아카이브',
 			sources: '관련 사료 및 연구', // Moved from about-general
-			announcements: '공지사항', // Moved from organization
 		},
 	},
 	contact: {

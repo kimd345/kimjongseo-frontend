@@ -1,4 +1,4 @@
-// src/components/admin/content-editor.tsx - Updated section options
+// src/components/admin/content-editor.tsx - Updated section permissions
 'use client';
 
 import { useState } from 'react';
@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import FileUpload from './file-upload';
 
 interface ContentEditorProps {
-	initialContent?: any; // Using any for now since we're migrating
+	initialContent?: any;
 }
 
 interface ContentForm {
@@ -27,17 +27,17 @@ interface ContentForm {
 	authorName?: string;
 }
 
-// Updated sections that allow content creation - reorganized
+// Updated sections that allow content creation - MODIFIED
 const CONTENT_ENABLED_SECTIONS = [
 	'library/press', // 자료실 > 보도자료
 	'library/academic', // 자료실 > 학술 자료
 	'library/archive', // 자료실 > 사진·영상 아카이브
-	'library/sources', // 자료실 > 관련 사료 및 연구 (moved from about-general)
-	'library/announcements', // 자료실 > 공지사항 (moved from organization)
+	'library/sources', // 자료실 > 관련 사료 및 연구
+	'library/announcements', // 자료실 > 공지사항
 	'organization/projects', // 기념사업회 > 선양사업
-	'about-general/life', // 절재 김종서 장군 > 생애 및 업적
-	'about-general/significance', // 절재 김종서 장군 > 역사적 의의
-	// Removed: about-general/photos (삭제됨)
+	'organization/history', // 기념사업회 > 연혁 (ADDED)
+	// REMOVED: 'about-general/life' - 절재 김종서 장군 > 생애 및 업적
+	// REMOVED: 'about-general/significance' - 절재 김종서 장군 > 역사적 의의
 ];
 
 export default function ContentEditor({ initialContent }: ContentEditorProps) {
@@ -67,9 +67,8 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 	});
 
 	const watchedType = watch('type');
-	// const watchedSection = watch('section');
 
-	// Generate section options with proper hierarchy - updated with new structure
+	// Generate section options with proper hierarchy
 	const getSectionOptions = () => {
 		const options: { value: string; label: string; disabled?: boolean }[] = [];
 
@@ -89,7 +88,7 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 				options.push({
 					value: mainKey,
 					label: mainSection.name,
-					disabled: true, // Contact page doesn't allow content
+					disabled: true,
 				});
 			}
 		});
@@ -119,10 +118,10 @@ export default function ContentEditor({ initialContent }: ContentEditorProps) {
 				return;
 			}
 
-			// Prepare content data - ensure no double escaping
+			// Prepare content data
 			const contentData = {
 				title: data.title,
-				content: data.content, // Keep content as-is, don't escape
+				content: data.content,
 				section: data.section,
 				type: data.type,
 				status: data.status,
