@@ -2,6 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SimpleAuth } from '@/lib/auth';
 import { Storage } from '@/lib/storage';
+import {
+	extractFileReferences,
+	cleanupOrphanedFiles,
+} from '@/lib/content-manager';
 
 async function findContentById(id: string, data: any) {
 	console.log('Looking for content with ID:', id);
@@ -75,6 +79,8 @@ export async function PUT(
 			return NextResponse.json({ error: 'Content not found' }, { status: 404 });
 		}
 
+		const oldContent = result.content;
+
 		// Clean content - remove extra escaping that might be added by the form
 		let cleanContent = updates.content;
 		if (typeof cleanContent === 'string') {
@@ -87,11 +93,21 @@ export async function PUT(
 			cleanContent = cleanContent.replace(/\\-/g, '-');
 		}
 
+		// Clean up orphaned files if content changed
+		if (oldContent.content !== cleanContent) {
+			await cleanupOrphanedFiles(params.id, cleanContent, oldContent.content);
+		}
+
+		// Extract current file references for tracking
+		const currentFiles = extractFileReferences(cleanContent);
+
 		const updatedContent = {
 			...result.content,
 			...updates,
 			content: cleanContent,
 			updatedAt: new Date().toISOString(),
+			// Track files referenced in content
+			referencedFiles: currentFiles,
 			// Handle youtubeUrls properly
 			youtubeUrls:
 				updates.youtubeUrls && typeof updates.youtubeUrls === 'string'
@@ -143,30 +159,61 @@ export async function DELETE(
 
 		const contentToDelete = result.content;
 
-		// Clean up associated images
+		// Enhanced image cleanup - handle both local and GitHub URLs
 		if (contentToDelete.content) {
-			const imageMatches = contentToDelete.content.match(
+			// Pattern 1: Local paths like /uploads/images/filename.jpg
+			const localImageMatches = contentToDelete.content.match(
 				/!\[.*?\]\((\/uploads\/[^)]+)\)/g
 			);
-			if (imageMatches) {
-				console.log('Found images to delete:', imageMatches);
 
-				for (const match of imageMatches) {
+			// Pattern 2: GitHub raw URLs
+			const githubImageMatches = contentToDelete.content.match(
+				/!\[.*?\]\((https:\/\/raw\.githubusercontent\.com\/[^)]+)\)/g
+			);
+
+			// Pattern 3: Images stored in the images array
+			const imageFiles = contentToDelete.images || [];
+
+			const allImageUrls: string[] = [];
+
+			// Collect local image paths
+			if (localImageMatches) {
+				localImageMatches.forEach((match: string) => {
 					const urlMatch = match.match(/\((\/uploads\/[^)]+)\)/);
-					if (urlMatch) {
-						const imagePath = urlMatch[1];
-
-						try {
-							await Storage.deleteFile(imagePath);
-							console.log('Deleted image file:', imagePath);
-						} catch (error: any) {
-							console.warn(
-								'Failed to delete image file:',
-								imagePath,
-								error.message
-							);
-						}
+					if (urlMatch && !allImageUrls.includes(urlMatch[1])) {
+						allImageUrls.push(urlMatch[1]);
 					}
+				});
+			}
+
+			// Collect GitHub URLs
+			if (githubImageMatches) {
+				githubImageMatches.forEach((match: string) => {
+					const urlMatch = match.match(
+						/\((https:\/\/raw\.githubusercontent\.com\/[^)]+)\)/
+					);
+					if (urlMatch && !allImageUrls.includes(urlMatch[1])) {
+						allImageUrls.push(urlMatch[1]);
+					}
+				});
+			}
+
+			// Add images from the images array
+			imageFiles.forEach((imageUrl: string) => {
+				if (!allImageUrls.includes(imageUrl)) {
+					allImageUrls.push(imageUrl);
+				}
+			});
+
+			console.log('Found images to delete:', allImageUrls);
+
+			// Delete each image
+			for (const imageUrl of allImageUrls) {
+				try {
+					await Storage.deleteFile(imageUrl);
+					console.log('Deleted image file:', imageUrl);
+				} catch (error: any) {
+					console.warn('Failed to delete image file:', imageUrl, error.message);
 				}
 			}
 		}

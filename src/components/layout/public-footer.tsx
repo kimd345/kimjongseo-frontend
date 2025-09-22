@@ -24,10 +24,11 @@ export default function PublicFooter() {
 					<div>
 						<h4 className='text-lg font-semibold mb-4'>연락처</h4>
 						<div className='space-y-2 text-gray-300'>
-							<p>전화: 603-82-13329</p>
-							{/* <p>이메일: jykim0614@hotmail.com</p> */}
+							<p>전화: 010-4738-9122</p>
+							<p>이메일: kjsassociation@naver.com</p>
 							<p>
-								재단 찾아오시는 길 주소:<br/>
+								재단 찾아오시는 길 주소:
+								<br />
 								서울 중구 남대문로7길 29 복창빌딩 904호
 							</p>
 						</div>

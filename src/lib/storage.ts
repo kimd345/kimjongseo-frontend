@@ -114,13 +114,28 @@ class GitHubStorage implements StorageInterface {
 	}
 
 	async deleteFile(filePath: string): Promise<void> {
-		// Extract path from GitHub URL if needed
-		const path = filePath.includes('raw.githubusercontent.com')
-			? filePath.split('/main/')[1]
-			: filePath;
+		let path = filePath;
+
+		// Handle different URL formats
+		if (filePath.includes('raw.githubusercontent.com')) {
+			// Extract path from GitHub raw URL
+			// https://raw.githubusercontent.com/owner/repo/main/public/uploads/images/file.jpg
+			const parts = filePath.split('/main/');
+			if (parts.length > 1) {
+				path = parts[1]; // Gets "public/uploads/images/file.jpg"
+			}
+		} else if (filePath.startsWith('/uploads/')) {
+			// Convert local path to GitHub path
+			path = `public${filePath}`; // "/uploads/images/file.jpg" -> "public/uploads/images/file.jpg"
+		} else if (filePath.startsWith('uploads/')) {
+			// Handle path without leading slash
+			path = `public/${filePath}`;
+		}
+
+		console.log(`Attempting to delete file: ${path} (original: ${filePath})`);
 
 		try {
-			// Get file SHA first
+			// Get file SHA first (required for deletion)
 			const existing = await this.githubFetch(path);
 
 			// Delete file
@@ -133,9 +148,17 @@ class GitHubStorage implements StorageInterface {
 			});
 
 			console.log('File deleted from GitHub:', path);
-		} catch (error) {
+		} catch (error: any) {
 			console.warn('Failed to delete file from GitHub:', error);
-			// Don't throw - deletion failures shouldn't break the app
+
+			// If file not found, that's actually okay (already deleted)
+			if (error.message?.includes('404')) {
+				console.log('File already deleted or not found:', path);
+				return;
+			}
+
+			// For other errors, don't throw - deletion failures shouldn't break content deletion
+			console.error('GitHub file deletion error:', error);
 		}
 	}
 }

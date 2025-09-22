@@ -9,13 +9,86 @@ export interface ContentItem {
 	category?: string;
 	publishedAt: string;
 	author?: string;
-	images?: string[];
+
+	// Enhanced image tracking
+	images?: string[]; // Featured/gallery images
+	attachedFiles?: AttachedFile[]; // All files uploaded for this content
+
 	youtubeId?: string;
 	youtubeUrls?: string[];
 	viewCount: number;
 	sortOrder: number;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface AttachedFile {
+	id: string;
+	fileName: string;
+	originalName: string;
+	url: string;
+	type: 'image' | 'document' | 'video';
+	category: string;
+	size: number;
+	uploadedAt: string;
+}
+
+// Utility function to extract all file references from content
+export function extractFileReferences(content: string): string[] {
+	const fileUrls: string[] = [];
+
+	// Extract markdown images
+	const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || [];
+	imageMatches.forEach((match) => {
+		const urlMatch = match.match(/\(([^)]+)\)/);
+		if (urlMatch && !fileUrls.includes(urlMatch[1])) {
+			fileUrls.push(urlMatch[1]);
+		}
+	});
+
+	// Extract markdown links to files
+	const linkMatches =
+		content.match(/\[.*?\]\(([^)]+\.(pdf|doc|docx|xls|xlsx|zip|rar))\)/gi) ||
+		[];
+	linkMatches.forEach((match) => {
+		const urlMatch = match.match(/\(([^)]+)\)/);
+		if (urlMatch && !fileUrls.includes(urlMatch[1])) {
+			fileUrls.push(urlMatch[1]);
+		}
+	});
+
+	return fileUrls; // Already deduplicated with includes() check
+}
+
+// Function to clean up orphaned files
+export async function cleanupOrphanedFiles(
+	contentId: string,
+	newContent: string,
+	oldContent?: string
+): Promise<void> {
+	if (!oldContent) return;
+
+	const oldFiles = extractFileReferences(oldContent);
+	const newFiles = extractFileReferences(newContent);
+
+	// Find files that are no longer referenced
+	const orphanedFiles = oldFiles.filter((file) => !newFiles.includes(file));
+
+	if (orphanedFiles.length > 0) {
+		console.log('Cleaning up orphaned files:', orphanedFiles);
+
+		// Import Storage dynamically to avoid circular imports
+		const { Storage } = await import('@/lib/storage');
+
+		for (const fileUrl of orphanedFiles) {
+			try {
+				await Storage.deleteFile(fileUrl);
+				console.log('Deleted orphaned file:', fileUrl);
+			} catch (error) {
+				console.warn('Failed to delete orphaned file:', fileUrl, error);
+			}
+		}
+	}
 }
 
 // Define section type with optional subsections
