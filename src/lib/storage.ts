@@ -1,6 +1,3 @@
-// Step 1: Create src/lib/storage.ts (Universal Storage Interface)
-// This keeps your existing code mostly unchanged
-
 interface StorageInterface {
 	saveContent(content: any): Promise<void>;
 	loadContent(): Promise<any>;
@@ -118,27 +115,20 @@ class GitHubStorage implements StorageInterface {
 
 		// Handle different URL formats
 		if (filePath.includes('raw.githubusercontent.com')) {
-			// Extract path from GitHub raw URL
-			// https://raw.githubusercontent.com/owner/repo/main/public/uploads/images/file.jpg
 			const parts = filePath.split('/main/');
 			if (parts.length > 1) {
-				path = parts[1]; // Gets "public/uploads/images/file.jpg"
+				path = parts[1];
 			}
 		} else if (filePath.startsWith('/uploads/')) {
-			// Convert local path to GitHub path
-			path = `public${filePath}`; // "/uploads/images/file.jpg" -> "public/uploads/images/file.jpg"
+			path = `public${filePath}`;
 		} else if (filePath.startsWith('uploads/')) {
-			// Handle path without leading slash
 			path = `public/${filePath}`;
 		}
 
 		console.log(`Attempting to delete file: ${path} (original: ${filePath})`);
 
 		try {
-			// Get file SHA first (required for deletion)
 			const existing = await this.githubFetch(path);
-
-			// Delete file
 			await this.githubFetch(path, {
 				method: 'DELETE',
 				body: JSON.stringify({
@@ -150,38 +140,36 @@ class GitHubStorage implements StorageInterface {
 			console.log('File deleted from GitHub:', path);
 		} catch (error: any) {
 			console.warn('Failed to delete file from GitHub:', error);
-
-			// If file not found, that's actually okay (already deleted)
 			if (error.message?.includes('404')) {
 				console.log('File already deleted or not found:', path);
 				return;
 			}
-
-			// For other errors, don't throw - deletion failures shouldn't break content deletion
 			console.error('GitHub file deletion error:', error);
 		}
 	}
 }
 
-// Fallback to filesystem for development
+// Fallback for development - ONLY imported server-side
 class FileSystemStorage implements StorageInterface {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	private fs = require('fs').promises;
-	private path = require('path');
-	private CONTENT_FILE = this.path.join(process.cwd(), 'data', 'content.json');
-
 	async saveContent(content: any): Promise<void> {
-		const dataDir = this.path.dirname(this.CONTENT_FILE);
-		await this.fs.mkdir(dataDir, { recursive: true });
-		await this.fs.writeFile(
-			this.CONTENT_FILE,
-			JSON.stringify(content, null, 2)
-		);
+		// Dynamic imports to prevent webpack bundling
+		const { promises: fs } = await import('fs');
+		const { join, dirname } = await import('path');
+
+		const contentFile = join(process.cwd(), 'data', 'content.json');
+		const dataDir = dirname(contentFile);
+
+		await fs.mkdir(dataDir, { recursive: true });
+		await fs.writeFile(contentFile, JSON.stringify(content, null, 2));
 	}
 
 	async loadContent(): Promise<any> {
 		try {
-			const data = await this.fs.readFile(this.CONTENT_FILE, 'utf8');
+			const { promises: fs } = await import('fs');
+			const { join } = await import('path');
+
+			const contentFile = join(process.cwd(), 'data', 'content.json');
+			const data = await fs.readFile(contentFile, 'utf8');
 			return JSON.parse(data);
 		} catch (error) {
 			console.log('Content file not found, creating default structure');
@@ -194,36 +182,49 @@ class FileSystemStorage implements StorageInterface {
 		fileName: string,
 		category: string
 	): Promise<string> {
-		const uploadsPath = this.path.join(
-			process.cwd(),
-			'public',
-			'uploads',
-			category
-		);
-		await this.fs.mkdir(uploadsPath, { recursive: true });
+		const { promises: fs } = await import('fs');
+		const { join } = await import('path');
+
+		const uploadsPath = join(process.cwd(), 'public', 'uploads', category);
+		await fs.mkdir(uploadsPath, { recursive: true });
 
 		const bytes = await file.arrayBuffer();
 		const buffer = Buffer.from(bytes);
-		const filePath = this.path.join(uploadsPath, fileName);
+		const filePath = join(uploadsPath, fileName);
 
-		await this.fs.writeFile(filePath, buffer);
+		await fs.writeFile(filePath, buffer);
 		return `/uploads/${category}/${fileName}`;
 	}
 
 	async deleteFile(filePath: string): Promise<void> {
-		const fullPath = this.path.join(process.cwd(), 'public', filePath);
+		const { promises: fs } = await import('fs');
+		const { join } = await import('path');
+
+		const fullPath = join(process.cwd(), 'public', filePath);
 		try {
-			await this.fs.unlink(fullPath);
+			await fs.unlink(fullPath);
 		} catch (error) {
 			console.warn('Failed to delete file:', error);
 		}
 	}
 }
 
-// Auto-select storage based on environment and create singleton instance
-const storage =
-	process.env.NODE_ENV === 'production' && process.env.GITHUB_TOKEN
-		? new GitHubStorage()
-		: new FileSystemStorage();
+// Create storage instance based on environment
+function createStorage(): StorageInterface {
+	// Check if we're in a server-side context
+	if (typeof window !== 'undefined') {
+		throw new Error('Storage should only be used server-side');
+	}
 
-export { storage as Storage };
+	// Use GitHub storage in production with token, filesystem otherwise
+	if (process.env.NODE_ENV === 'production' && process.env.GITHUB_TOKEN) {
+		console.log('Using GitHub storage for production');
+		return new GitHubStorage();
+	}
+
+	console.log('Using filesystem storage for development');
+	return new FileSystemStorage();
+}
+
+// Export a factory function instead of a singleton
+export const Storage = createStorage();
