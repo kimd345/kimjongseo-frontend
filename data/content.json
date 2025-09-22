@@ -1,6 +1,24 @@
 {
   "content": {
     "about-general/sources": [],
-    "library/announcements": []
+    "library/announcements": [
+      {
+        "title": "testy test",
+        "content": "\n\n![lofi-2.jpg](https://raw.githubusercontent.com/kimd345/kimjongseo-frontend/main/public/uploads/images/1758503411365-a8z30dp0jzw.jpg)",
+        "section": "library/announcements",
+        "type": "announcement",
+        "status": "published",
+        "category": "",
+        "youtubeId": "",
+        "youtubeUrls": [],
+        "authorName": "관리자",
+        "id": "content-1758503416839-2wx65kabg",
+        "createdAt": "2025-09-22T01:10:16.839Z",
+        "updatedAt": "2025-09-22T01:10:16.839Z",
+        "publishedAt": "2025-09-22T01:10:16.839Z",
+        "viewCount": 0,
+        "author": "관리자"
+      }
+    ]
   }
 }
