@@ -20,9 +20,11 @@ export default function EnhancedHeroSection({
 	const contentRef = useRef<HTMLDivElement>(null);
 	const hyoonggapRef = useRef<HTMLDivElement>(null);
 	const poemWrapperRef = useRef<HTMLDivElement>(null);
-	const poemStanza1Ref = useRef<HTMLParagraphElement>(null);
-	const poemStanza2Ref = useRef<HTMLParagraphElement>(null);
-	const poemStanza3Ref = useRef<HTMLParagraphElement>(null);
+	const poemStanza1Ref = useRef<HTMLDivElement>(null);
+	const poemStanza2Ref = useRef<HTMLDivElement>(null);
+	const poemStanza3Ref = useRef<HTMLDivElement>(null);
+	const poemStanza4Ref = useRef<HTMLDivElement>(null);
+	const poemStanza5Ref = useRef<HTMLDivElement>(null);
 	const poemAttributionRef = useRef<HTMLDivElement>(null);
 	const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
@@ -81,42 +83,44 @@ export default function EnhancedHeroSection({
 				});
 			}
 
-			// Pin poem wrapper once it enters viewport
+			// Pin poem wrapper near the top when it enters viewport
 			ScrollTrigger.create({
 				trigger: poemWrapperRef.current,
-				start: 'center center',
+				start: 'top 15%',
 				end: () =>
-					`+=${heroRef.current!.offsetHeight - window.innerHeight * 1.6}`,
+					`+=${heroRef.current!.offsetHeight - window.innerHeight * 1.4}`,
 				pin: true,
 				pinSpacing: false,
 			});
 
-			// Animate each stanza sliding in from left
+			// Animate each stanza sliding down from above with faster timing
 			const stanzas = [
 				poemStanza1Ref.current,
 				poemStanza2Ref.current,
 				poemStanza3Ref.current,
+				poemStanza4Ref.current,
+				poemStanza5Ref.current,
 			];
 
 			stanzas.forEach((stanza, index) => {
 				if (stanza) {
 					ScrollTrigger.create({
 						trigger: heroRef.current,
-						start: `top+=${20 + index * 15}% top`,
-						end: `top+=${30 + index * 15}% top`,
+						start: `top+=${25 + index * 7}% top`,
+						end: `top+=${32 + index * 7}% top`,
 						onEnter: () => {
 							gsap.to(stanza, {
 								opacity: 1,
-								x: 0,
-								duration: 0.8,
+								y: 0,
+								duration: 0.6,
 								ease: 'power3.out',
 							});
 						},
 						onLeaveBack: () => {
 							gsap.to(stanza, {
 								opacity: 0,
-								x: -60,
-								duration: 0.6,
+								y: -60,
+								duration: 0.4,
 								ease: 'power2.in',
 							});
 						},
@@ -124,23 +128,25 @@ export default function EnhancedHeroSection({
 				}
 			});
 
-			// Animate attribution
+			// Animate attribution - appears with last stanza, stays visible longer
 			if (poemAttributionRef.current) {
 				ScrollTrigger.create({
 					trigger: heroRef.current,
 					start: 'top+=60% top',
-					end: 'top+=70% top',
+					end: 'top+=68% top',
 					onEnter: () => {
 						gsap.to(poemAttributionRef.current, {
 							opacity: 1,
-							duration: 0.8,
+							y: 0,
+							duration: 0.6,
 							ease: 'power2.out',
 						});
 					},
 					onLeaveBack: () => {
 						gsap.to(poemAttributionRef.current, {
 							opacity: 0,
-							duration: 0.6,
+							y: -60,
+							duration: 0.4,
 							ease: 'power2.in',
 						});
 					},
@@ -225,47 +231,100 @@ export default function EnhancedHeroSection({
 				</div>
 			</div>
 
-			{/* Poem Section - Will be pinned when in viewport */}
+			{/* Poem Section - Vertical layout left-aligned, slides down from above */}
 			<div
 				ref={poemWrapperRef}
-				className='absolute left-6 sm:left-8 md:left-12 lg:left-20 z-10 max-w-[85%] sm:max-w-2xl md:max-w-3xl'
+				className='absolute left-6 sm:left-8 md:left-12 lg:left-20 z-10'
 				style={{ top: '90vh' }}
 			>
-				<div className='text-white space-y-6 sm:space-y-8 md:space-y-10'>
-					{/* Stanza 1 */}
-					<p
+				<div className='flex items-start gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-white'>
+					{/* Stanza 1 - 삭풍은나모끝에불고 (Rightmost - read first) */}
+					<div
 						ref={poemStanza1Ref}
-						className='font-chosun text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
-						style={{ transform: 'translateX(-60px)' }}
+						className='opacity-0'
+						style={{
+							transform: 'translateY(-60px)',
+							writingMode: 'vertical-rl',
+							textOrientation: 'upright',
+						}}
 					>
-						삭풍(朔風)은 나모 끝에 불고 명월(明月)은 눈 속에 찬데,
-					</p>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+							삭풍은나모끝에불고
+						</p>
+					</div>
 
-					{/* Stanza 2 */}
-					<p
+					{/* Stanza 2 - 명월은눈속에찬데 */}
+					<div
 						ref={poemStanza2Ref}
-						className='font-chosun text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
-						style={{ transform: 'translateX(-60px)' }}
+						className='opacity-0'
+						style={{
+							transform: 'translateY(-60px)',
+							writingMode: 'vertical-rl',
+							textOrientation: 'upright',
+						}}
 					>
-						만리변성(萬里邊城)에 일장검(一長劍) 짚고 서서,
-					</p>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+							명월은눈속에찬데
+						</p>
+					</div>
 
-					{/* Stanza 3 */}
-					<p
+					{/* Stanza 3 - 만리변성에일장검짚고서서 */}
+					<div
 						ref={poemStanza3Ref}
-						className='font-chosun text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
-						style={{ transform: 'translateX(-60px)' }}
+						className='opacity-0'
+						style={{
+							transform: 'translateY(-60px)',
+							writingMode: 'vertical-rl',
+							textOrientation: 'upright',
+						}}
 					>
-						긴 파람 큰 한 소래에 거칠 것이 없에라.
-					</p>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+							만리변성에일장검짚고서서
+						</p>
+					</div>
 
-					{/* Attribution */}
+					{/* Stanza 4 - 긴파람큰한소래에 */}
+					<div
+						ref={poemStanza4Ref}
+						className='opacity-0'
+						style={{
+							transform: 'translateY(-60px)',
+							writingMode: 'vertical-rl',
+							textOrientation: 'upright',
+						}}
+					>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+							긴파람큰한소래에
+						</p>
+					</div>
+
+					{/* Stanza 5 - 거칠것이없에라 */}
+					<div
+						ref={poemStanza5Ref}
+						className='opacity-0'
+						style={{
+							transform: 'translateY(-60px)',
+							writingMode: 'vertical-rl',
+							textOrientation: 'upright',
+						}}
+					>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+							거칠것이없에라
+						</p>
+					</div>
+
+					{/* Attribution - Leftmost column (read last) */}
 					<div
 						ref={poemAttributionRef}
-						className='mt-6 sm:mt-8 pt-4 sm:pt-6 border-t-2 border-white/40 opacity-0'
+						className='opacity-0'
+						style={{
+							transform: 'translateY(-60px)',
+							writingMode: 'vertical-rl',
+							textOrientation: 'mixed',
+						}}
 					>
-						<p className='text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 italic font-medium'>
-							- 절재 김종서 장군의 시조 호기가(豪氣歌)
+						<p className='text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 italic font-medium border-r-2 border-white/40 pr-2 sm:pr-3'>
+							- 절재 김종서 장군의 시조 호기가
 						</p>
 					</div>
 				</div>
