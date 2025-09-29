@@ -183,7 +183,7 @@ export default function ContactPage() {
 								</div>
 							)}
 							<iframe
-								src='https://map.kakao.com/link/map/복창빌딩,37.5638, 126.9802'
+								src='https://map.kakao.com/link/map/서울특별시 중구 남대문로7길 29,37.5638, 126.9802'
 								width='100%'
 								height='100%'
 								style={{ border: 0 }}
@@ -203,74 +203,50 @@ export default function ContactPage() {
 
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 								{/* Subway */}
-								<div className='bg-white rounded-lg p-6 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-4'>
+								<div className='bg-white rounded-lg p-5 border border-gray-200'>
+									<div className='flex items-center gap-2 mb-3'>
 										<div className='w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center'>
 											<span className='text-white text-sm font-bold'>M</span>
 										</div>
-										<h4 className='text-lg font-semibold text-gray-900'>
+										<h4 className='text-base font-semibold text-gray-900'>
 											지하철
 										</h4>
 									</div>
 									<ul className='space-y-2 text-gray-600 text-sm'>
 										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0'></span>
-											<span>
-												<strong className='text-gray-900'>4호선 회현역</strong>{' '}
-												5번 출구 (도보 5분)
-											</span>
+											<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-600 mt-2 flex-shrink-0'></span>
+											<span>2호선 을지로입구역 7번 출구 (도보 3분)</span>
 										</li>
 										<li className='flex items-start gap-2'>
 											<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-600 mt-2 flex-shrink-0'></span>
-											<span>
-												<strong className='text-gray-900'>
-													2호선 을지로입구역
-												</strong>{' '}
-												7번 출구 (도보 10분)
-											</span>
+											<span>1/2호선 시청역 7번 출구 (도보 4분)</span>
 										</li>
 										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-											<span>
-												<strong className='text-gray-900'>1호선 시청역</strong>{' '}
-												5번 출구 (도보 12분)
-											</span>
+											<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0'></span>
+											<span>4호선 회현역 7번 출구 (도보 8분)</span>
 										</li>
 									</ul>
 								</div>
 
 								{/* Bus */}
-								<div className='bg-white rounded-lg p-6 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-4'>
+								<div className='bg-white rounded-lg p-5 border border-gray-200'>
+									<div className='flex items-center gap-2 mb-3'>
 										<div className='w-8 h-8 bg-green-600 rounded-full flex items-center justify-center'>
 											<span className='text-white text-sm font-bold'>🚌</span>
 										</div>
-										<h4 className='text-lg font-semibold text-gray-900'>
+										<h4 className='text-base font-semibold text-gray-900'>
 											버스
 										</h4>
 									</div>
 									<ul className='space-y-2 text-gray-600 text-sm'>
 										<li className='flex items-start gap-2'>
 											<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0'></span>
-											<span>
-												<strong className='text-gray-900'>간선버스</strong> 151,
-												152, 160, 261, 270
-											</span>
+											<span>간선: 402, 406, N26</span>
 										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0'></span>
-											<span>
-												<strong className='text-gray-900'>지선버스</strong>{' '}
-												7016, 7018
-											</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-red-500 mt-2 flex-shrink-0'></span>
-											<span>
-												<strong className='text-gray-900'>정류장</strong>{' '}
-												남대문시장, 회현역 정류장 하차
-											</span>
-										</li>
+										{/* <li className='flex items-start gap-2'>
+										<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0'></span>
+										<span>정류장: 남대문경찰서, 회현역</span>
+									</li> */}
 									</ul>
 								</div>
 
@@ -301,27 +277,23 @@ export default function ContactPage() {
 								</div>
 
 								{/* Landmarks */}
-								<div className='bg-white rounded-lg p-6 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-4'>
+								<div className='bg-white rounded-lg p-5 border border-gray-200'>
+									<div className='flex items-center gap-2 mb-3'>
 										<div className='w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center'>
 											<span className='text-white text-sm font-bold'>📍</span>
 										</div>
-										<h4 className='text-lg font-semibold text-gray-900'>
-											주변 랜드마크
+										<h4 className='text-base font-semibold text-gray-900'>
+											주변 안내
 										</h4>
 									</div>
 									<ul className='space-y-2 text-gray-600 text-sm'>
 										<li className='flex items-start gap-2'>
 											<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-											<span>남대문시장 인근</span>
+											<span>남대문시장 도보 5분</span>
 										</li>
 										<li className='flex items-start gap-2'>
 											<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-											<span>서울시청 도보 거리</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-											<span>명동 상권 인근</span>
+											<span>남대문 도보 7분</span>
 										</li>
 									</ul>
 								</div>

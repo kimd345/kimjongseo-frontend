@@ -1,4 +1,4 @@
-// src/components/layout/public-header.tsx - Enhanced with scroll effects
+// src/components/layout/public-header.tsx - Fixed z-index issue
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,7 +37,7 @@ export default function PublicHeader() {
 	}, []);
 
 	const headerClasses = `
-    fixed top-0 left-0 right-0 z-50 transition-all duration-300
+    fixed top-0 left-0 right-0 z-[9999] transition-all duration-300
     ${
 			isScrolled || !isHomePage
 				? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm'
@@ -102,7 +102,7 @@ export default function PublicHeader() {
 									</Link>
 
 									{section.subsections.length > 0 && (
-										<div className='absolute left-0 mt-1 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-200 z-50'>
+										<div className='absolute left-0 mt-1 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-200 z-[10000]'>
 											<div className='py-1'>
 												{section.subsections.map((subsection) => (
 													<Link

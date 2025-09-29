@@ -146,7 +146,7 @@ export default function ContactSection() {
 							</div>
 						)}
 						<iframe
-							src='https://map.kakao.com/link/map/서울특별시 중구 남대문로7길 29 복창빌딩 904,37.5638, 126.9802'
+							src='https://map.kakao.com/link/map/서울특별시 중구 남대문로7길 29,37.5638, 126.9802'
 							width='100%'
 							height='100%'
 							style={{ border: 0 }}
@@ -173,12 +173,16 @@ export default function ContactSection() {
 								</div>
 								<ul className='space-y-2 text-gray-600 text-sm'>
 									<li className='flex items-start gap-2'>
-										<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0'></span>
-										<span>4호선 회현역 5번 출구 (도보 5분)</span>
+										<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-600 mt-2 flex-shrink-0'></span>
+										<span>2호선 을지로입구역 7번 출구 (도보 3분)</span>
 									</li>
 									<li className='flex items-start gap-2'>
 										<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-600 mt-2 flex-shrink-0'></span>
-										<span>2호선 을지로입구역 7번 출구</span>
+										<span>1/2호선 시청역 7번 출구 (도보 4분)</span>
+									</li>
+									<li className='flex items-start gap-2'>
+										<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0'></span>
+										<span>4호선 회현역 7번 출구 (도보 8분)</span>
 									</li>
 								</ul>
 							</div>
@@ -196,12 +200,12 @@ export default function ContactSection() {
 								<ul className='space-y-2 text-gray-600 text-sm'>
 									<li className='flex items-start gap-2'>
 										<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0'></span>
-										<span>간선: 151, 152, 160, 261, 270</span>
+										<span>간선: 402, 406, N26</span>
 									</li>
-									<li className='flex items-start gap-2'>
+									{/* <li className='flex items-start gap-2'>
 										<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0'></span>
-										<span>지선: 7016, 7018</span>
-									</li>
+										<span>정류장: 남대문경찰서, 회현역</span>
+									</li> */}
 								</ul>
 							</div>
 
@@ -218,11 +222,11 @@ export default function ContactSection() {
 								<ul className='space-y-2 text-gray-600 text-sm'>
 									<li className='flex items-start gap-2'>
 										<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-										<span>남대문시장 인근</span>
+										<span>남대문시장 도보 5분</span>
 									</li>
 									<li className='flex items-start gap-2'>
 										<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-										<span>서울시청 도보 거리</span>
+										<span>남대문 도보 7분</span>
 									</li>
 								</ul>
 							</div>
