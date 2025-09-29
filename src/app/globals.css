@@ -39,6 +39,25 @@ body {
   word-wrap: break-word;
 }
 
+/* Text shadow utilities for better readability */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7),
+               0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.text-shadow-xl {
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8),
+               0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
 /* Line clamping utilities */
 .line-clamp-1 {
   overflow: hidden;
