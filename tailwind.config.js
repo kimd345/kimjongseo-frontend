@@ -32,6 +32,7 @@ module.exports = {
 					'Malgun Gothic',
 					'sans-serif',
 				],
+				chosun: ['Chosun', 'Apple SD Gothic Neo', 'Noto Sans KR', 'sans-serif'],
 			},
 			animation: {
 				'fade-in': 'fadeIn 0.5s ease-in-out',

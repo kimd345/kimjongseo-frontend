@@ -15,8 +15,10 @@ export default function EnhancedHeroSection({
 	onScrollToNext,
 }: EnhancedHeroSectionProps) {
 	const [imageLoaded, setImageLoaded] = useState(false);
+	const [hyoonggapLoaded, setHyoonggapLoaded] = useState(false);
 	const heroRef = useRef<HTMLElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
+	const hyoonggapRef = useRef<HTMLDivElement>(null);
 	const poemWrapperRef = useRef<HTMLDivElement>(null);
 	const poemStanza1Ref = useRef<HTMLParagraphElement>(null);
 	const poemStanza2Ref = useRef<HTMLParagraphElement>(null);
@@ -54,11 +56,37 @@ export default function EnhancedHeroSection({
 				},
 			});
 
+			// Pin hyoonggap image to stay visible during poem transition
+			if (hyoonggapRef.current) {
+				ScrollTrigger.create({
+					trigger: hyoonggapRef.current,
+					start: 'top 50%',
+					end: () =>
+						`+=${heroRef.current!.offsetHeight - window.innerHeight}`,
+					pin: true,
+					pinSpacing: false,
+				});
+
+				// Subtle fade and scale on scroll
+				gsap.to(hyoonggapRef.current, {
+					opacity: 0.7,
+					scale: 0.95,
+					ease: 'none',
+					scrollTrigger: {
+						trigger: heroRef.current,
+						start: 'top+=50% top',
+						end: 'bottom top',
+						scrub: true,
+					},
+				});
+			}
+
 			// Pin poem wrapper once it enters viewport
 			ScrollTrigger.create({
 				trigger: poemWrapperRef.current,
 				start: 'center center',
-				end: () => `+=${heroRef.current!.offsetHeight - window.innerHeight * 1.6}`,
+				end: () =>
+					`+=${heroRef.current!.offsetHeight - window.innerHeight * 1.6}`,
 				pin: true,
 				pinSpacing: false,
 			});
@@ -163,10 +191,10 @@ export default function EnhancedHeroSection({
 				className='relative z-10 text-right text-white px-6 sm:px-8 md:px-12 lg:px-20 max-w-7xl mx-auto w-full pt-24 sm:pt-32 md:pt-40'
 			>
 				<div className='ml-auto max-w-2xl'>
-					<h1 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 md:mb-6 leading-tight'>
+					<h1 className='font-chosun text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 md:mb-6 leading-tight'>
 						절재 김종서 장군
 					</h1>
-					<div className='text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-brand-300 mb-6 md:mb-8'>
+					<div className='font-chosun text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-brand-300 mb-6 md:mb-8'>
 						金宗瑞 (1383-1453)
 					</div>
 					<p className='text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-200 leading-relaxed'>
@@ -174,6 +202,26 @@ export default function EnhancedHeroSection({
 						<br />
 						6진 개척을 통한 영토 확장의 주역
 					</p>
+				</div>
+			</div>
+
+			{/* Hyoonggap Image - Right Aligned, Smaller, Pinned */}
+			<div
+				ref={hyoonggapRef}
+				className='relative z-10 flex justify-end px-6 sm:px-8 md:px-12 lg:px-20 max-w-7xl mx-auto w-full mt-8 sm:mt-12 md:mt-16'
+			>
+				<div className='relative w-48 sm:w-56 md:w-64 lg:w-72'>
+					<Image
+						src='/assets/hyoonggap.png'
+						alt='형갑'
+						width={400}
+						height={300}
+						className={`w-full h-auto transition-all duration-1000 drop-shadow-2xl ${
+							hyoonggapLoaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+						}`}
+						priority
+						onLoad={() => setHyoonggapLoaded(true)}
+					/>
 				</div>
 			</div>
 
@@ -187,34 +235,28 @@ export default function EnhancedHeroSection({
 					{/* Stanza 1 */}
 					<p
 						ref={poemStanza1Ref}
-						className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
+						className='font-chosun text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
 						style={{ transform: 'translateX(-60px)' }}
 					>
-						삭풍(朔風)은 나모 끝에 불고
-						<br />
-						명월(明月)은 눈 속에 찬데,
+						삭풍(朔風)은 나모 끝에 불고 명월(明月)은 눈 속에 찬데,
 					</p>
 
 					{/* Stanza 2 */}
 					<p
 						ref={poemStanza2Ref}
-						className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
+						className='font-chosun text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
 						style={{ transform: 'translateX(-60px)' }}
 					>
-						만리변성(萬里邊城)에
-						<br />
-						일장검(一長劍) 짚고 서서,
+						만리변성(萬里邊城)에 일장검(一長劍) 짚고 서서,
 					</p>
 
 					{/* Stanza 3 */}
 					<p
 						ref={poemStanza3Ref}
-						className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
+						className='font-chosun text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-relaxed font-bold text-shadow-lg opacity-0'
 						style={{ transform: 'translateX(-60px)' }}
 					>
-						긴 파람 큰 한 소래에
-						<br />
-						거칠 것이 없에라.
+						긴 파람 큰 한 소래에 거칠 것이 없에라.
 					</p>
 
 					{/* Attribution */}
@@ -223,7 +265,7 @@ export default function EnhancedHeroSection({
 						className='mt-6 sm:mt-8 pt-4 sm:pt-6 border-t-2 border-white/40 opacity-0'
 					>
 						<p className='text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 italic font-medium'>
-							- 절재 김종서 장군의 시조
+							- 절재 김종서 장군의 시조 호기가(豪氣歌)
 						</p>
 					</div>
 				</div>

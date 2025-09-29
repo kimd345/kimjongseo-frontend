@@ -4,6 +4,15 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap');
 
+/* Add Chosun font */
+@font-face {
+  font-family: 'Chosun';
+  src: url('/fonts/chosun.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #ffffff;
   --fg: #1f2937;
@@ -12,6 +21,7 @@
   --brand-2: #0ea5e9;
   --surface: #f3f4f6;
   --border: #e5e7eb;
+  --font-chosun: 'Chosun', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
 
 * {
