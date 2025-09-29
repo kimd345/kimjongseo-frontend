@@ -1,6 +1,24 @@
 {
   "content": {
     "about-general/sources": [],
-    "library/announcements": []
+    "library/announcements": [
+      {
+        "title": "테스트요",
+        "content": "# 김동테스트\n## 커피잔에 얼음 동동\n동그라미 동그랑땡\n\n![20250928_142125.jpg](https://raw.githubusercontent.com/kimd345/kimjongseo-frontend/main/public/uploads/images/1759135248887-paf5lhi1juh.jpg)",
+        "section": "library/announcements",
+        "type": "announcement",
+        "status": "published",
+        "category": "",
+        "youtubeId": "",
+        "youtubeUrls": [],
+        "authorName": "김동동",
+        "id": "content-1759135304484-sxg8fxm8j",
+        "createdAt": "2025-09-29T08:41:44.484Z",
+        "updatedAt": "2025-09-29T08:41:44.484Z",
+        "publishedAt": "2025-09-29T08:41:44.484Z",
+        "viewCount": 0,
+        "author": "김동동"
+      }
+    ]
   }
 }
