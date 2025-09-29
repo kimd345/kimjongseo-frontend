@@ -42,15 +42,21 @@ export default function PublicFooter() {
 								href='https://www.mcst.go.kr'
 								target='_blank'
 								rel='noopener noreferrer'
-								className='block hover:opacity-80 transition-opacity'
+								className='block group'
 							>
-								<Image
-									src='/assets/문화체육관광부.jpg'
-									alt='문화체육관광부'
-									width={200}
-									height={60}
-									className='object-contain max-h-12 w-auto'
-								/>
+								{/* Logo container with white background and subtle styling */}
+								<div className='inline-block bg-white rounded-lg p-3 shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105'>
+									<Image
+										src='/assets/문화체육관광부.jpg'
+										alt='문화체육관광부'
+										width={160}
+										height={48}
+										className='object-contain h-10 w-auto'
+									/>
+								</div>
+								<p className='text-xs text-gray-400 mt-2 group-hover:text-gray-300 transition-colors'>
+									문화체육관광부 바로가기
+								</p>
 							</a>
 						</div>
 
@@ -89,14 +95,29 @@ export default function PublicFooter() {
 					</div>
 				</div>
 
-				<div className='border-t border-gray-800 mt-8 pt-8 text-center text-gray-400'>
-					<p>
-						&copy; {new Date().getFullYear()} 김종서장군기념사업회. All rights
-						reserved.
-					</p>
-					<p className='mt-2'>
-						기념사업회 대표자: 김진연 | 고유번호: 603-82-13329
-					</p>
+				<div className='border-t border-gray-800 mt-8 pt-8'>
+					{/* Main footer info */}
+					<div className='text-center text-gray-400 space-y-2'>
+						<p>
+							&copy; {new Date().getFullYear()} 김종서장군기념사업회. All rights
+							reserved.
+						</p>
+						<p>기념사업회 대표자: 김진연 | 고유번호: 603-82-13329</p>
+					</div>
+
+					{/* Developer Credit - Modern & Traditional */}
+					<div className='mt-6 pt-6 border-t border-gray-800/50'>
+						<div className='flex flex-col sm:flex-row items-center justify-center gap-1 text-xs text-gray-500'>
+							<span className='font-medium'>Website Crafted by</span>
+							<div className='flex items-center gap-1'>
+								<span className='text-gray-500'>Dong Hyuk Kim</span>
+								<span className='text-gray-600'>·</span>
+								{/* <span className='text-gray-400'>김동혁</span>
+								<span className='text-gray-600'>·</span> */}
+								<span className='font-korean text-gray-500'>金東赫 (41세손)</span>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</footer>

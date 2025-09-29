@@ -1,3 +1,4 @@
+// src/app/page.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -9,6 +10,7 @@ import PublicLayout from '@/components/layout/public-layout';
 import EnhancedHeroSection from '@/components/home/hero';
 import ContentSections from '@/components/home/content';
 import RecentNewsSection from '@/components/home/recent-news';
+import ContactSection from '@/components/home/contact';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -125,6 +127,9 @@ export default function HomePage() {
 
 			{/* Recent News Section */}
 			<RecentNewsSection contents={recentContents} />
+
+			{/* Contact & Location Section - Static Implementation */}
+			<ContactSection />
 		</PublicLayout>
 	);
 }
