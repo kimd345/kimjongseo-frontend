@@ -1,8 +1,9 @@
-// src/components/layout/public-header.tsx - Fixed z-index issue
+// src/components/layout/public-header.tsx - Logo with image
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FIXED_SECTIONS, hasSubsections } from '@/lib/content-manager';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
@@ -75,17 +76,15 @@ export default function PublicHeader() {
 					<div className='flex items-center justify-between h-16'>
 						{/* Logo */}
 						<Link href='/' className={logoClasses}>
-							<div
-								className={`
-                w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300
-                ${
-									isScrolled || !isHomePage
-										? 'bg-gradient-to-br from-brand-600 to-brand-700'
-										: 'bg-white/20 backdrop-blur-sm'
-								}
-              `}
-							>
-								<span className='text-white text-lg font-bold'>紀</span>
+							<div className='w-10 h-10 rounded-lg overflow-hidden flex-shrink-0'>
+								<Image
+									src='/assets/painting.png'
+									alt='김종서장군기념사업회 로고'
+									width={40}
+									height={40}
+									className='w-full h-full object-contain'
+									priority
+								/>
 							</div>
 							<div className='font-bold'>
 								<span className='hidden sm:inline'>김종서장군기념사업회</span>

@@ -63,19 +63,20 @@ export function MobileOptimizedSection({
 							inView ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
 						}`}
 					>
-						<div className='relative h-64 sm:h-80 rounded-xl overflow-hidden shadow-lg'>
+						{/* shadow-lg */}
+						<div className='relative h-64 sm:h-80 rounded-xl overflow-hidden'>
 							<Image
 								src={image}
 								alt={name}
 								fill
-								className={`object-cover transition-all duration-700 ${
+								className={`object-contain transition-all duration-700 ${
 									imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-sm'
 								}`}
 								sizes='(max-width: 768px) 100vw'
 								onLoad={() => setImageLoaded(true)}
 								priority={index < 2}
 							/>
-							<div className='absolute inset-0 bg-gradient-to-t from-black/30 to-transparent' />
+							{/* <div className='absolute inset-0 bg-gradient-to-t from-black/30 to-transparent' /> */}
 						</div>
 					</div>
 
@@ -202,19 +203,20 @@ export function MobileOptimizedSection({
 							inView ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
 						}`}
 					>
-						<div className='relative h-[500px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl'>
+						{/* shadow-2xl */}
+						<div className='relative h-[500px] md:h-[600px] rounded-2xl overflow-hidden'>
 							<Image
 								src={image}
 								alt={name}
 								fill
-								className={`object-cover transition-all duration-700 ${
+								className={`object-contain transition-all duration-700 ${
 									imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-sm'
 								}`}
 								sizes='(max-width: 1024px) 100vw, 50vw'
 								onLoad={() => setImageLoaded(true)}
 								priority={index < 2}
 							/>
-							<div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent' />
+							{/* <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent' /> */}
 						</div>
 					</div>
 				</div>

@@ -58,26 +58,17 @@ export default function EnhancedHeroSection({
 				},
 			});
 
-			// Pin hyoonggap image to stay visible during poem transition
+			// Fade out hyoonggap image completely as user scrolls
 			if (hyoonggapRef.current) {
-				ScrollTrigger.create({
-					trigger: hyoonggapRef.current,
-					start: 'top 50%',
-					end: () =>
-						`+=${heroRef.current!.offsetHeight - window.innerHeight}`,
-					pin: true,
-					pinSpacing: false,
-				});
-
-				// Subtle fade and scale on scroll
 				gsap.to(hyoonggapRef.current, {
-					opacity: 0.7,
-					scale: 0.95,
-					ease: 'none',
+					opacity: 0,
+					scale: 1,
+					y: 0,
+					ease: 'power2.out',
 					scrollTrigger: {
 						trigger: heroRef.current,
-						start: 'top+=50% top',
-						end: 'bottom top',
+						start: 'top+=10% top',
+						end: 'top+=20% top',
 						scrub: true,
 					},
 				});
@@ -86,9 +77,8 @@ export default function EnhancedHeroSection({
 			// Pin poem wrapper near the top when it enters viewport
 			ScrollTrigger.create({
 				trigger: poemWrapperRef.current,
-				start: 'top 15%',
-				end: () =>
-					`+=${heroRef.current!.offsetHeight - window.innerHeight * 1.4}`,
+				start: 'top 20%',
+				end: () => `+=${heroRef.current!.offsetHeight * 0.4}`,
 				pin: true,
 				pinSpacing: false,
 			});
@@ -106,8 +96,8 @@ export default function EnhancedHeroSection({
 				if (stanza) {
 					ScrollTrigger.create({
 						trigger: heroRef.current,
-						start: `top+=${25 + index * 5}% top`,
-						end: `top+=${32 + index * 5}% top`,
+						start: `top+=${10 + index * 4}% top`,
+						end: `top+=${16 + index * 4}% top`,
 						onEnter: () => {
 							gsap.to(stanza, {
 								opacity: 1,
@@ -132,8 +122,8 @@ export default function EnhancedHeroSection({
 			if (poemAttributionRef.current) {
 				ScrollTrigger.create({
 					trigger: heroRef.current,
-					start: 'top+=55% top',
-					end: 'top+=63% top',
+					start: 'top+=35% top',
+					end: 'top+=42% top',
 					onEnter: () => {
 						gsap.to(poemAttributionRef.current, {
 							opacity: 1,
@@ -172,7 +162,7 @@ export default function EnhancedHeroSection({
 		<section
 			ref={heroRef}
 			className='relative overflow-hidden'
-			style={{ height: '200vh', minHeight: '200vh' }}
+			style={{ height: '170vh', minHeight: '170vh' }}
 		>
 			{/* Background Image with Parallax */}
 			<div className='hero-background absolute inset-0 w-full h-full'>
@@ -235,7 +225,7 @@ export default function EnhancedHeroSection({
 			<div
 				ref={poemWrapperRef}
 				className='absolute left-6 sm:left-8 md:left-12 lg:left-20 z-10'
-				style={{ top: '90vh' }}
+				style={{ top: '45vh' }}
 			>
 				<div className='flex flex-row-reverse items-start gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-white'>
 					{/* Stanza 1 - 삭풍은나모끝에불고 (Rightmost - read first) */}
@@ -268,7 +258,7 @@ export default function EnhancedHeroSection({
 						</p>
 					</div>
 
-					{/* Stanza 3 - 만리변성에일장검짚고서서 */}
+					{/* Stanza 3 - 만리변성에일장검짊고서서 */}
 					<div
 						ref={poemStanza3Ref}
 						className='opacity-0'
@@ -279,11 +269,11 @@ export default function EnhancedHeroSection({
 						}}
 					>
 						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
-							만리변성에일장검짚고서서
+							만리변성에일장검짊고서서
 						</p>
 					</div>
 
-					{/* Stanza 4 - 긴파람큰한소래에 */}
+					{/* Stanza 4 - 긴파람흰한소래에 */}
 					<div
 						ref={poemStanza4Ref}
 						className='opacity-0'
@@ -294,7 +284,7 @@ export default function EnhancedHeroSection({
 						}}
 					>
 						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
-							긴파람큰한소래에
+							긴파람흰한소래에
 						</p>
 					</div>
 
@@ -347,7 +337,7 @@ export default function EnhancedHeroSection({
 			</div>
 
 			{/* Gradient Overlay at Bottom */}
-			<div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10' />
+			<div className='absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10' />
 		</section>
 	);
 }
