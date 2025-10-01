@@ -106,8 +106,8 @@ export default function EnhancedHeroSection({
 				if (stanza) {
 					ScrollTrigger.create({
 						trigger: heroRef.current,
-						start: `top+=${25 + index * 7}% top`,
-						end: `top+=${32 + index * 7}% top`,
+						start: `top+=${25 + index * 5}% top`,
+						end: `top+=${32 + index * 5}% top`,
 						onEnter: () => {
 							gsap.to(stanza, {
 								opacity: 1,
@@ -132,8 +132,8 @@ export default function EnhancedHeroSection({
 			if (poemAttributionRef.current) {
 				ScrollTrigger.create({
 					trigger: heroRef.current,
-					start: 'top+=60% top',
-					end: 'top+=68% top',
+					start: 'top+=55% top',
+					end: 'top+=63% top',
 					onEnter: () => {
 						gsap.to(poemAttributionRef.current, {
 							opacity: 1,
@@ -237,7 +237,7 @@ export default function EnhancedHeroSection({
 				className='absolute left-6 sm:left-8 md:left-12 lg:left-20 z-10'
 				style={{ top: '90vh' }}
 			>
-				<div className='flex items-start gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-white'>
+				<div className='flex flex-row-reverse items-start gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-white'>
 					{/* Stanza 1 - 삭풍은나모끝에불고 (Rightmost - read first) */}
 					<div
 						ref={poemStanza1Ref}
