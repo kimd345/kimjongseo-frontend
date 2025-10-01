@@ -108,13 +108,14 @@ export default function PublicFooter() {
 					{/* Developer Credit - Modern & Traditional */}
 					<div className='mt-6 pt-6 border-t border-gray-800/50'>
 						<div className='flex flex-col sm:flex-row items-center justify-center gap-1 text-xs text-gray-500'>
-							<span className='font-medium'>Website Crafted by</span>
+							{/* <span className='font-medium'>Made in 🇰🇷 by</span> */}
+							<span className='font-medium'>Made with 🤍 by</span>
 							<div className='flex items-center gap-1'>
 								<span className='text-gray-500'>Dong Hyuk Kim</span>
-								<span className='text-gray-600'>·</span>
-								{/* <span className='text-gray-400'>김동혁</span>
-								<span className='text-gray-600'>·</span> */}
-								<span className='font-korean text-gray-500'>金東赫 (41세손)</span>
+								{/* <span className='text-gray-600'>·</span> */}
+								{/* <span className='text-gray-400'>김동혁</span> */}
+								{/* <span className='text-gray-600'>·</span> */}
+								{/* <span className='font-korean text-gray-500'>金東赫</span> */}
 							</div>
 						</div>
 					</div>
