@@ -7,15 +7,41 @@ if (typeof window !== 'undefined') {
 	gsap.registerPlugin(ScrollTrigger);
 }
 
+// Interactive word component for Korean/Chinese character swapping
+function InteractiveWord({
+	korean,
+	chinese,
+}: {
+	korean: string;
+	chinese: string;
+}) {
+	const [showChinese, setShowChinese] = useState(false);
+
+	return (
+		<span
+			className='inline-block cursor-pointer text-brand-300 hover:text-brand-200 transition-colors duration-200 select-none'
+			style={{
+				letterSpacing: showChinese ? '0.25em' : 'normal',
+			}}
+			onMouseEnter={() => setShowChinese(true)}
+			onMouseLeave={() => setShowChinese(false)}
+			onTouchStart={() => setShowChinese(!showChinese)}
+		>
+			{showChinese ? chinese : korean}
+		</span>
+	);
+}
+
 interface EnhancedHeroSectionProps {
 	onScrollToNext: () => void;
 }
 
 export default function EnhancedHeroSection({
-	onScrollToNext,
+	// onScrollToNext,
 }: EnhancedHeroSectionProps) {
 	const [imageLoaded, setImageLoaded] = useState(false);
 	const [hyoonggapLoaded, setHyoonggapLoaded] = useState(false);
+	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 	const heroRef = useRef<HTMLElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const hyoonggapRef = useRef<HTMLDivElement>(null);
@@ -27,6 +53,22 @@ export default function EnhancedHeroSection({
 	const poemStanza5Ref = useRef<HTMLDivElement>(null);
 	const poemAttributionRef = useRef<HTMLDivElement>(null);
 	const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+
+	// Track mouse movement for hyoonggap parallax effect
+	useEffect(() => {
+		const handleMouseMove = (e: MouseEvent) => {
+			if (!hyoonggapRef.current) return;
+
+			const rect = hyoonggapRef.current.getBoundingClientRect();
+			const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+			const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+
+			setMousePosition({ x, y });
+		};
+
+		window.addEventListener('mousemove', handleMouseMove);
+		return () => window.removeEventListener('mousemove', handleMouseMove);
+	}, []);
 
 	useEffect(() => {
 		if (!heroRef.current || !contentRef.current || !poemWrapperRef.current)
@@ -144,15 +186,17 @@ export default function EnhancedHeroSection({
 			}
 
 			// Fade out scroll indicator
-			gsap.to(scrollIndicatorRef.current, {
-				opacity: 0,
-				scrollTrigger: {
-					trigger: heroRef.current,
-					start: 'top top',
-					end: 'top+=150 top',
-					scrub: true,
-				},
-			});
+			if (scrollIndicatorRef.current) {
+				gsap.to(scrollIndicatorRef.current, {
+					opacity: 0,
+					scrollTrigger: {
+						trigger: heroRef.current,
+						start: 'top top',
+						end: 'top+=150 top',
+						scrub: true,
+					},
+				});
+			}
 		}, heroRef);
 
 		return () => ctx.revert();
@@ -201,23 +245,31 @@ export default function EnhancedHeroSection({
 				</div>
 			</div>
 
-			{/* Hyoonggap Image - Right Aligned, Smaller, Pinned */}
+			{/* Hyoonggap Image - Right Aligned, Smaller, with Interactive Hover Effect */}
 			<div
 				ref={hyoonggapRef}
 				className='relative z-10 flex justify-end px-6 sm:px-8 md:px-12 lg:px-20 max-w-7xl mx-auto w-full mt-8 sm:mt-12 md:mt-16'
 			>
-				<div className='relative w-48 sm:w-56 md:w-64 lg:w-72'>
+				<div
+					className='relative w-48 sm:w-56 md:w-64 lg:w-72 cursor-pointer group'
+					style={{
+						transform: `perspective(1000px) rotateY(${mousePosition.x * 10}deg) rotateX(${mousePosition.y * -10}deg)`,
+						transition: 'transform 0.3s ease-out',
+					}}
+				>
 					<Image
 						src='/assets/hyoonggap.png'
 						alt='형갑'
 						width={400}
 						height={300}
-						className={`w-full h-auto transition-all duration-1000 drop-shadow-2xl ${
+						className={`w-full h-auto transition-all duration-1000 drop-shadow-2xl group-hover:drop-shadow-[0_0_30px_rgba(251,191,36,0.5)] ${
 							hyoonggapLoaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
 						}`}
 						priority
 						onLoad={() => setHyoonggapLoaded(true)}
 					/>
+					{/* Glow effect behind image */}
+					<div className='absolute inset-0 bg-brand-400/0 group-hover:bg-brand-400/20 blur-2xl transition-all duration-500 -z-10' />
 				</div>
 			</div>
 
@@ -238,8 +290,9 @@ export default function EnhancedHeroSection({
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
-							삭풍은나모끝에불고
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide select-none'>
+							<InteractiveWord korean='삭풍' chinese='朔風' />
+							은나모끝에불고
 						</p>
 					</div>
 
@@ -253,8 +306,9 @@ export default function EnhancedHeroSection({
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
-							명월은눈속에찬데
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide select-none'>
+							<InteractiveWord korean='명월' chinese='明月' />
+							은눈속에찬데
 						</p>
 					</div>
 
@@ -268,8 +322,10 @@ export default function EnhancedHeroSection({
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
-							만리변성에일장검짊고서서
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide select-none'>
+							<InteractiveWord korean='만리변성' chinese='萬里邊城' />에
+							<InteractiveWord korean='일장검' chinese='一長劍' />
+							짊고서서
 						</p>
 					</div>
 
@@ -283,7 +339,7 @@ export default function EnhancedHeroSection({
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide select-none'>
 							긴파람흰한소래에
 						</p>
 					</div>
@@ -298,7 +354,7 @@ export default function EnhancedHeroSection({
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide'>
+						<p className='font-chosun text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-shadow-lg tracking-wide select-none'>
 							거칠것이없에라
 						</p>
 					</div>
@@ -313,29 +369,13 @@ export default function EnhancedHeroSection({
 							textOrientation: 'mixed',
 						}}
 					>
-						<p className='text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 italic font-medium border-r-2 border-white/40 pr-2 sm:pr-3'>
-							- 절재 김종서 장군의 시조 호기가
+						<p className='text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 italic font-medium border-r-2 border-white/40 pr-2 sm:pr-3 select-none'>
+							- 절재 김종서 장군의 시조{' '}
+							<InteractiveWord korean='호기가' chinese='豪氣歌' />
 						</p>
 					</div>
 				</div>
 			</div>
-
-			{/* Scroll Indicator */}
-			<div
-				ref={scrollIndicatorRef}
-				className='absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center cursor-pointer z-20'
-				onClick={onScrollToNext}
-			>
-				<div className='flex flex-col items-center animate-bounce'>
-					<div className='w-6 h-10 border-2 border-white/80 rounded-full flex justify-center mb-2'>
-						<div className='w-1 h-3 bg-white/80 rounded-full mt-2 animate-pulse' />
-					</div>
-					<p className='text-white/80 text-sm font-medium'>
-						스크롤하여 더 보기
-					</p>
-				</div>
-			</div>
-
 			{/* Gradient Overlay at Bottom */}
 			<div className='absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10' />
 		</section>

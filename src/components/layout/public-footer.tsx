@@ -9,9 +9,6 @@ export default function PublicFooter() {
 					{/* Organization Info */}
 					<div className='md:col-span-2'>
 						<div className='flex items-center gap-3 mb-4'>
-							<div className='w-10 h-10 bg-gradient-to-br from-brand-600 to-brand-700 rounded-lg flex items-center justify-center'>
-								<span className='text-white text-lg font-bold'>紀</span>
-							</div>
 							<h3 className='text-lg font-bold'>김종서장군기념사업회</h3>
 						</div>
 						<p className='text-gray-300 mb-4'>

@@ -78,7 +78,7 @@ export default function PublicHeader() {
 						<Link href='/' className={logoClasses}>
 							<div className='w-10 h-10 rounded-lg overflow-hidden flex-shrink-0'>
 								<Image
-									src='/assets/painting.png'
+									src='/assets/logo.png'
 									alt='김종서장군기념사업회 로고'
 									width={40}
 									height={40}
