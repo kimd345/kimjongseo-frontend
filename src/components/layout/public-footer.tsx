@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function PublicFooter() {
 	return (
-		<footer className='bg-gray-900 text-white'>
+		<footer className='bg-black text-white'>
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
 				<div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
 					{/* Organization Info */}
@@ -106,7 +106,7 @@ export default function PublicFooter() {
 					<div className='mt-6 pt-6 border-t border-gray-800/50'>
 						<div className='flex flex-col sm:flex-row items-center justify-center gap-1 text-xs text-gray-500'>
 							{/* <span className='font-medium'>Made in 🇰🇷 by</span> */}
-							<span className='font-medium'>Made with 🤍 by</span>
+							<span className='font-medium'>Site by</span>
 							<div className='flex items-center gap-1'>
 								<span className='text-gray-500'>Dong Hyuk Kim</span>
 								{/* <span className='text-gray-600'>·</span> */}

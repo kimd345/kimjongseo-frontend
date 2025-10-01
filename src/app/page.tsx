@@ -107,7 +107,7 @@ export default function HomePage() {
 	if (loading) {
 		return (
 			<PublicLayout>
-				<div className='min-h-screen flex items-center justify-center bg-gray-900'>
+				<div className='min-h-screen flex items-center justify-center bg-black'>
 					<div className='text-center'>
 						<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4'></div>
 						<p className='text-white'>로딩중...</p>

@@ -134,7 +134,7 @@ export function MobileOptimizedSection({
 						<div className='text-center pt-4'>
 							<Link
 								href={url}
-								className='inline-flex items-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700 transition-all duration-200 active:scale-[0.98] shadow-md'
+								className='inline-flex items-center px-6 py-3 bg-white text-black border-black border font-semibold rounded-lg transition-all duration-200 active:scale-[0.98] shadow-md'
 								style={{ minHeight: '44px' }} // iOS touch target
 							>
 								자세히 보기
@@ -189,7 +189,7 @@ export function MobileOptimizedSection({
 						<div className='pt-6'>
 							<Link
 								href={url}
-								className='inline-flex items-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700 transition-all duration-200 transform hover:scale-105'
+								className='inline-flex items-center px-6 py-3 bg-white text-black border-black border font-semibold rounded-lg transition-all duration-200 transform hover:scale-105'
 							>
 								자세히 보기
 								<ArrowRightIcon className='ml-2 h-5 w-5' />

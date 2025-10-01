@@ -17,10 +17,10 @@
   --bg: #ffffff;
   --fg: #1f2937;
   --muted: #6b7280;
-  --brand: #1e40af;
-  --brand-2: #0ea5e9;
+  --brand: #D3AF37;
+  --brand-2: #E1B768;
   --surface: #f3f4f6;
-  --border: #e5e7eb;
+  --border: #B0892D;
   --font-chosun: 'Chosun', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
 
@@ -66,6 +66,25 @@ body {
 .text-shadow-xl {
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8),
                0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* White text shadow utilities for light backgrounds */
+.text-shadow-white-sm {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.text-shadow-white-md {
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.text-shadow-white-lg {
+  text-shadow: 0 3px 8px rgba(255, 255, 255, 1),
+               0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+.text-shadow-white-xl {
+  text-shadow: 0 4px 12px rgba(255, 255, 255, 1),
+               0 2px 6px rgba(255, 255, 255, 1);
 }
 
 /* Line clamping utilities */

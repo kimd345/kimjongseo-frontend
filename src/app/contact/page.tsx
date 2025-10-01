@@ -165,7 +165,7 @@ export default function ContactPage() {
 
 					{/* Map Section */}
 					<div className='bg-white rounded-2xl shadow-lg overflow-hidden'>
-						<div className='bg-gradient-to-r from-brand-600 to-brand-700 px-6 py-4'>
+						<div className='bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4'>
 							<h2 className='text-2xl font-bold text-white flex items-center gap-2'>
 								<MapPinIcon className='h-6 w-6' />
 								오시는 길
@@ -193,111 +193,6 @@ export default function ContactPage() {
 								onLoad={() => setMapLoaded(true)}
 								title='김종서장군기념사업회 위치 - 복창빌딩'
 							></iframe>
-						</div>
-
-						{/* Transportation Guide */}
-						<div className='p-6 md:p-8 bg-gray-50 border-t border-gray-200'>
-							<h3 className='text-xl font-bold text-gray-900 mb-6'>
-								교통편 안내
-							</h3>
-
-							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-								{/* Subway */}
-								<div className='bg-white rounded-lg p-5 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-3'>
-										<div className='w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center'>
-											<span className='text-white text-sm font-bold'>M</span>
-										</div>
-										<h4 className='text-base font-semibold text-gray-900'>
-											지하철
-										</h4>
-									</div>
-									<ul className='space-y-2 text-gray-600 text-sm'>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-600 mt-2 flex-shrink-0'></span>
-											<span>2호선 을지로입구역 7번 출구 (도보 3분)</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-600 mt-2 flex-shrink-0'></span>
-											<span>1/2호선 시청역 7번 출구 (도보 4분)</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0'></span>
-											<span>4호선 회현역 7번 출구 (도보 8분)</span>
-										</li>
-									</ul>
-								</div>
-
-								{/* Bus */}
-								<div className='bg-white rounded-lg p-5 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-3'>
-										<div className='w-8 h-8 bg-green-600 rounded-full flex items-center justify-center'>
-											<span className='text-white text-sm font-bold'>🚌</span>
-										</div>
-										<h4 className='text-base font-semibold text-gray-900'>
-											버스
-										</h4>
-									</div>
-									<ul className='space-y-2 text-gray-600 text-sm'>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0'></span>
-											<span>간선: 402, 406, N26</span>
-										</li>
-										{/* <li className='flex items-start gap-2'>
-										<span className='inline-block w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0'></span>
-										<span>정류장: 남대문경찰서, 회현역</span>
-									</li> */}
-									</ul>
-								</div>
-
-								{/* Parking */}
-								<div className='bg-white rounded-lg p-6 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-4'>
-										<div className='w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center'>
-											<span className='text-white text-sm font-bold'>P</span>
-										</div>
-										<h4 className='text-lg font-semibold text-gray-900'>
-											주차안내
-										</h4>
-									</div>
-									<ul className='space-y-2 text-gray-600 text-sm'>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-purple-600 mt-2 flex-shrink-0'></span>
-											<span>건물 내 주차 공간 협소</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-purple-600 mt-2 flex-shrink-0'></span>
-											<span>인근 공영주차장 이용 권장</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-purple-600 mt-2 flex-shrink-0'></span>
-											<span>대중교통 이용을 추천드립니다</span>
-										</li>
-									</ul>
-								</div>
-
-								{/* Landmarks */}
-								<div className='bg-white rounded-lg p-5 border border-gray-200'>
-									<div className='flex items-center gap-2 mb-3'>
-										<div className='w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center'>
-											<span className='text-white text-sm font-bold'>📍</span>
-										</div>
-										<h4 className='text-base font-semibold text-gray-900'>
-											주변 안내
-										</h4>
-									</div>
-									<ul className='space-y-2 text-gray-600 text-sm'>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-											<span>남대문시장 도보 5분</span>
-										</li>
-										<li className='flex items-start gap-2'>
-											<span className='inline-block w-1.5 h-1.5 rounded-full bg-orange-600 mt-2 flex-shrink-0'></span>
-											<span>남대문 도보 7분</span>
-										</li>
-									</ul>
-								</div>
-							</div>
 						</div>
 					</div>
 
