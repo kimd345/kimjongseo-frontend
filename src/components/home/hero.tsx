@@ -19,7 +19,7 @@ function InteractiveWord({
 
 	return (
 		<span
-			className='inline-block cursor-pointer text-brand-900 hover:text-brand-800 transition-colors duration-200 select-none'
+			className='inline-block cursor-pointer text-brand-200 hover:text-brand-300 transition-colors duration-200 select-none'
 			style={{
 				letterSpacing: showChinese ? '0.25em' : 'normal',
 			}}
@@ -203,7 +203,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 	return (
 		<section
 			ref={heroRef}
-			className='relative overflow-hidden'
+			className='relative overflow-hidden select-none'
 			style={{ height: '170vh', minHeight: '170vh' }}
 		>
 			{/* Background Image with Parallax - LIGHT OVERLAY */}
@@ -221,22 +221,22 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 					onLoad={() => setImageLoaded(true)}
 				/>
 				{/* REVERSED: Light gradient overlay */}
-				{/* <div className='absolute inset-0 bg-gradient-to-b from-white/80 via-white/70 to-white/80' /> */}
+				<div className='absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40' />
 			</div>
 
 			{/* Main Content - Right Aligned at Top - DARK TEXT */}
 			<div
 				ref={contentRef}
-				className='relative z-10 text-right text-gray-900 px-6 sm:px-8 md:px-12 lg:px-20 max-w-7xl mx-auto w-full pt-24 sm:pt-32 md:pt-40'
+				className='relative z-10 text-right text-black px-6 sm:px-8 md:px-12 lg:px-20 max-w-7xl mx-auto w-full pt-24 sm:pt-32 md:pt-40'
 			>
 				<div className='ml-auto max-w-2xl'>
 					<h1 className='font-chosun text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 md:mb-6 leading-tight'>
 						절재 김종서 장군
 					</h1>
-					<div className='font-chosun text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-brand-900 mb-6 md:mb-8'>
+					<div className='font-chosun text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-gray-900 mb-6 md:mb-8'>
 						金宗瑞 (1383-1453)
 					</div>
-					<p className='text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700 leading-relaxed'>
+					<p className='text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-800 leading-relaxed'>
 						조선 전기의 명재상이자 무장
 						<br />
 						6진 개척을 통한 영토 확장의 주역
@@ -278,7 +278,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 				className='absolute left-6 sm:left-8 md:left-12 lg:left-20 z-10'
 				style={{ top: '45vh' }}
 			>
-				<div className='flex flex-row-reverse items-start gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-gray-900'>
+				<div className='flex flex-row-reverse items-start gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-white'>
 					{/* Stanza 1 - 삭풍은나모끝에불고 (Rightmost - read first) */}
 					<div
 						ref={poemStanza1Ref}
@@ -289,7 +289,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-white-xl tracking-wide select-none'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
 							<InteractiveWord korean='삭풍' chinese='朔風' />
 							은나모끝에불고
 						</p>
@@ -305,7 +305,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-white-xl tracking-wide select-none'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
 							<InteractiveWord korean='명월' chinese='明月' />
 							은눈속에찬데
 						</p>
@@ -321,7 +321,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-white-xl tracking-wide select-none'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
 							<InteractiveWord korean='만리변성' chinese='萬里邊城' />에
 							<InteractiveWord korean='일장검' chinese='一長劍' />
 							짊고서서
@@ -338,7 +338,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-white-xl tracking-wide select-none'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
 							긴파람흰한소래에
 						</p>
 					</div>
@@ -353,7 +353,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-white-xl tracking-wide select-none'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
 							거칠것이없에라
 						</p>
 					</div>
@@ -368,7 +368,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'mixed',
 						}}
 					>
-						<p className='font-chosun text-sm sm:text-base md:text-lg lg:text-xl font-bold border-r-2 border-gray-900/40 pr-2 sm:pr-3 select-none text-shadow-white-xl'>
+						<p className='font-chosun text-sm sm:text-base md:text-lg lg:text-xl font-bold border-r-2 border-gray-900/40 pr-2 sm:pr-3 text-shadow-brand-xl'>
 							- 김종서 장군의 시조{' '}
 							<InteractiveWord korean='호기가' chinese='豪氣歌' />
 						</p>

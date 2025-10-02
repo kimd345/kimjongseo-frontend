@@ -87,9 +87,6 @@ export function MobileOptimizedSection({
 						}`}
 					>
 						<div className='text-center'>
-							<span className='inline-block px-3 py-1 bg-brand-100 text-brand-800 text-sm font-medium rounded-full mb-3'>
-								{String(index + 1).padStart(2, '0')}
-							</span>
 							<h2 className='text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight'>
 								{name}
 							</h2>
@@ -153,9 +150,6 @@ export function MobileOptimizedSection({
 						}`}
 					>
 						<div>
-							<span className='inline-block px-4 py-2 bg-brand-100 text-brand-800 text-sm font-medium rounded-full mb-4'>
-								{String(index + 1).padStart(2, '0')}
-							</span>
 							<h2 className='text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight'>
 								{name}
 							</h2>
