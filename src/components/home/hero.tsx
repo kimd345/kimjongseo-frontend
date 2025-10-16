@@ -376,7 +376,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 				</div>
 			</div>
 			{/* Gradient Overlay at Bottom */}
-			<div className='absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10' />
+			{/* <div className='absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10' /> */}
 		</section>
 	);
 }

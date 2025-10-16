@@ -1,4 +1,4 @@
-// src/components/ui/modern-video-section.tsx - Simplified: Videos only on desktop
+// src/components/ui/modern-video-section.tsx - Alternating Colors
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -40,6 +40,9 @@ export function VideoSection({
 		rootMargin: '100px',
 	});
 
+	// Determine if this section should be dark (white text on black bg) or light (black text on white bg)
+	const isDark = index % 2 === 0;
+
 	useEffect(() => {
 		const checkMobile = () => {
 			setIsMobile(window.innerWidth < 768);
@@ -73,7 +76,7 @@ export function VideoSection({
 			ref={ref}
 			id={`${id}-section`}
 			className={`relative min-h-screen flex items-center ${
-				index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+				isDark ? 'bg-black' : 'bg-white'
 			}`}
 		>
 			<div className='w-full'>
@@ -103,17 +106,29 @@ export function VideoSection({
 					>
 						<div className='space-y-6'>
 							<div className='text-center'>
-								<h2 className='text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight'>
+								<h2
+									className={`text-3xl sm:text-4xl font-bold mb-4 leading-tight ${
+										isDark ? 'text-white' : 'text-gray-900'
+									}`}
+								>
 									{name}
 								</h2>
-								<p className='text-lg sm:text-xl text-gray-600 leading-relaxed'>
+								<p
+									className={`text-lg sm:text-xl leading-relaxed ${
+										isDark ? 'text-gray-300' : 'text-gray-600'
+									}`}
+								>
 									{description}
 								</p>
 							</div>
 
 							{subsections && (
 								<div className='space-y-3'>
-									<h3 className='text-center text-lg font-semibold text-gray-900 mb-4'>
+									<h3
+										className={`text-center text-lg font-semibold mb-4 ${
+											isDark ? 'text-white' : 'text-gray-900'
+										}`}
+									>
 										주요 내용
 									</h3>
 									<div className='grid grid-cols-1 gap-3'>
@@ -123,16 +138,36 @@ export function VideoSection({
 												<Link
 													key={subId}
 													href={`/${id}/${subId}`}
-													className='flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:border-brand-300 hover:shadow-md transition-all duration-200 group active:scale-[0.98]'
+													className={`flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-all duration-200 group active:scale-[0.98] ${
+														isDark
+															? 'bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-700'
+															: 'bg-white border-gray-200 hover:border-brand-300'
+													}`}
 												>
-													<span className='font-medium text-gray-900 group-hover:text-brand-600'>
+													<span
+														className={`font-medium transition-colors ${
+															isDark
+																? 'text-white group-hover:text-gray-300'
+																: 'text-gray-900 group-hover:text-brand-600'
+														}`}
+													>
 														{subName}
 													</span>
-													<ChevronRightIcon className='h-5 w-5 text-gray-400 group-hover:text-brand-500 group-hover:translate-x-1 transition-all' />
+													<ChevronRightIcon
+														className={`h-5 w-5 group-hover:translate-x-1 transition-all ${
+															isDark
+																? 'text-gray-400 group-hover:text-gray-300'
+																: 'text-gray-400 group-hover:text-brand-500'
+														}`}
+													/>
 												</Link>
 											))}
 										{Object.keys(subsections).length > 3 && (
-											<div className='text-center text-sm text-gray-500 pt-2'>
+											<div
+												className={`text-center text-sm pt-2 ${
+													isDark ? 'text-gray-400' : 'text-gray-500'
+												}`}
+											>
 												외 {Object.keys(subsections).length - 3}개 항목
 											</div>
 										)}
@@ -143,7 +178,11 @@ export function VideoSection({
 							<div className='text-center pt-4'>
 								<Link
 									href={url}
-									className='inline-flex items-center px-6 py-3 bg-white text-black border-black border font-semibold rounded-lg transition-all duration-200 active:scale-[0.98] shadow-md'
+									className={`inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 active:scale-[0.98] shadow-md ${
+										isDark
+											? 'bg-white text-black border border-white hover:bg-gray-100'
+											: 'bg-black text-white border border-black hover:bg-gray-900'
+									}`}
 								>
 									자세히 보기
 									<ArrowRightIcon className='ml-2 h-5 w-5' />
@@ -212,7 +251,13 @@ export function VideoSection({
 						<div className='w-full px-8 lg:px-16 py-16'>
 							<div className='max-w-xl mx-auto space-y-8'>
 								{/* Decorative Small Image */}
-								<div className='relative w-32 h-32 rounded-2xl overflow-hidden shadow-lg border-4 border-white'>
+								<div
+									className={`relative w-32 h-32 rounded-2xl overflow-hidden shadow-lg ${
+										isDark
+											? 'border-4 border-gray-800'
+											: 'border-4 border-white'
+									}`}
+								>
 									<Image
 										src={image}
 										alt={`${name} 아이콘`}
@@ -224,10 +269,18 @@ export function VideoSection({
 
 								{/* Title & Description */}
 								<div>
-									<h2 className='text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight'>
+									<h2
+										className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight ${
+											isDark ? 'text-white' : 'text-gray-900'
+										}`}
+									>
 										{name}
 									</h2>
-									<p className='text-xl md:text-2xl text-gray-600 leading-relaxed mb-8'>
+									<p
+										className={`text-xl md:text-2xl leading-relaxed mb-8 ${
+											isDark ? 'text-gray-300' : 'text-gray-600'
+										}`}
+									>
 										{description}
 									</p>
 								</div>
@@ -235,19 +288,39 @@ export function VideoSection({
 								{/* Subsections */}
 								{subsections && (
 									<div className='space-y-3'>
-										<h3 className='text-lg font-semibold text-gray-900 mb-4'>
+										<h3
+											className={`text-lg font-semibold mb-4 ${
+												isDark ? 'text-white' : 'text-gray-900'
+											}`}
+										>
 											주요 내용
 										</h3>
 										{Object.entries(subsections).map(([subId, subName]) => (
 											<Link
 												key={subId}
 												href={`/${id}/${subId}`}
-												className='flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:border-brand-300 hover:shadow-md transition-all duration-200 group'
+												className={`flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-all duration-200 group ${
+													isDark
+														? 'bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-700'
+														: 'bg-white border-gray-200 hover:border-brand-300'
+												}`}
 											>
-												<span className='font-medium text-gray-900 group-hover:text-brand-600'>
+												<span
+													className={`font-medium transition-colors ${
+														isDark
+															? 'text-white group-hover:text-gray-300'
+															: 'text-gray-900 group-hover:text-brand-600'
+													}`}
+												>
 													{subName}
 												</span>
-												<ChevronRightIcon className='h-5 w-5 text-gray-400 group-hover:text-brand-500 group-hover:translate-x-1 transition-all' />
+												<ChevronRightIcon
+													className={`h-5 w-5 group-hover:translate-x-1 transition-all ${
+														isDark
+															? 'text-gray-400 group-hover:text-gray-300'
+															: 'text-gray-400 group-hover:text-brand-500'
+													}`}
+												/>
 											</Link>
 										))}
 									</div>
@@ -257,7 +330,11 @@ export function VideoSection({
 								<div className='pt-6'>
 									<Link
 										href={url}
-										className='inline-flex items-center px-6 py-3 bg-white text-black border-black border font-semibold rounded-lg transition-all duration-200 transform hover:scale-105'
+										className={`inline-flex items-center px-6 py-3 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 ${
+											isDark
+												? 'bg-white text-black border border-white hover:bg-gray-100'
+												: 'bg-black text-white border border-black hover:bg-gray-900'
+										}`}
 									>
 										자세히 보기
 										<ArrowRightIcon className='ml-2 h-5 w-5' />
