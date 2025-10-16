@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Link from 'next/link';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import {
 	ContentItem,
 	FIXED_SECTIONS,
@@ -12,7 +13,7 @@ import {
 import { cleanMarkdownForPreview } from '@/lib/content-utils';
 import PublicLayout from '@/components/layout/public-layout';
 import LoadingSpinner from '@/components/ui/loading-spinner';
-import { HomeIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 export default function DynamicPage() {
 	const { slug } = useParams();
@@ -116,50 +117,26 @@ export default function DynamicPage() {
 	return (
 		<PublicLayout>
 			{/* Breadcrumbs */}
-			<div className='bg-white border-b border-gray-200'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-					<nav className='flex py-4' aria-label='Breadcrumb'>
-						<ol className='flex items-center space-x-4'>
-							<li>
-								<Link
-									href='/'
-									className='text-gray-400 hover:text-gray-500 transition-colors'
-								>
-									<HomeIcon className='h-5 w-5' />
-									<span className='sr-only'>홈</span>
-								</Link>
-							</li>
-							<li>
-								<div className='flex items-center'>
-									<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-									{subSection ? (
-										<Link
-											href={`/${mainSection}`}
-											className='text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors'
-										>
-											{sectionInfo.name}
-										</Link>
-									) : (
-										<span className='text-sm font-medium text-gray-900'>
-											{sectionInfo.name}
-										</span>
-									)}
-								</div>
-							</li>
-							{subSection && (
-								<li>
-									<div className='flex items-center'>
-										<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-										<span className='text-sm font-medium text-gray-900'>
-											{currentSectionName}
-										</span>
-									</div>
-								</li>
-							)}
-						</ol>
-					</nav>
-				</div>
-			</div>
+			<Breadcrumbs
+				items={
+					subSection
+						? [
+								{ name: sectionInfo.name, href: `/${mainSection}` },
+								{
+									name: currentSectionName,
+									href: `/${currentPath}`,
+									current: true,
+								},
+							]
+						: [
+								{
+									name: sectionInfo.name,
+									href: `/${mainSection}`,
+									current: true,
+								},
+							]
+				}
+			/>
 
 			{/* Page Header */}
 			<div className='bg-gradient-to-r from-brand-900 to-brand-700 text-white'>

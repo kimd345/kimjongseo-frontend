@@ -1,22 +1,21 @@
 // src/app/content/[id]/page.tsx - Fixed hydration error
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ContentItem, FIXED_SECTIONS } from '@/lib/content-manager';
-import PublicLayout from '@/components/layout/public-layout';
-import LoadingSpinner from '@/components/ui/loading-spinner';
 import ReactMarkdown from 'react-markdown';
 import {
 	ChevronLeftIcon,
-	HomeIcon,
 	ChevronRightIcon,
 	CalendarIcon,
 	EyeIcon,
 	UserIcon,
 } from '@heroicons/react/24/outline';
-import React from 'react';
+import { ContentItem, FIXED_SECTIONS } from '@/lib/content-manager';
+import PublicLayout from '@/components/layout/public-layout';
+import LoadingSpinner from '@/components/ui/loading-spinner';
+import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 export default function ContentDetailPage() {
 	const { id } = useParams();
@@ -94,45 +93,18 @@ export default function ContentDetailPage() {
 	return (
 		<PublicLayout>
 			{/* Breadcrumbs */}
-			<div className='bg-white border-b border-gray-200'>
-				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
-					<nav className='flex py-4' aria-label='Breadcrumb'>
-						<ol className='flex items-center space-x-4'>
-							{breadcrumbs.map((breadcrumb, index) => (
-								<li key={breadcrumb.href}>
-									<div className='flex items-center'>
-										{index === 0 ? (
-											<Link
-												href={breadcrumb.href}
-												className='text-gray-400 hover:text-gray-500 transition-colors'
-											>
-												<HomeIcon className='h-5 w-5' />
-												<span className='sr-only'>{breadcrumb.name}</span>
-											</Link>
-										) : (
-											<>
-												<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-												{index === breadcrumbs.length - 1 ? (
-													<span className='text-sm font-medium text-gray-900 truncate max-w-60'>
-														{breadcrumb.name}
-													</span>
-												) : (
-													<Link
-														href={breadcrumb.href}
-														className='text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors truncate max-w-40'
-													>
-														{breadcrumb.name}
-													</Link>
-												)}
-											</>
-										)}
-									</div>
-								</li>
-							))}
-						</ol>
-					</nav>
-				</div>
-			</div>
+			{content && sectionInfo && (
+				<Breadcrumbs
+					items={[
+						{ name: sectionInfo.name, href: `/${content.section}` },
+						{
+							name: content.title,
+							href: `/content/${content.id}`,
+							current: true,
+						},
+					]}
+				/>
+			)}
 
 			<div className='min-h-screen bg-gray-50 py-8'>
 				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>

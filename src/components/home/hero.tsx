@@ -289,7 +289,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							<InteractiveWord korean='삭풍' chinese='朔風' />
 							은나모끝에불고
 						</p>
@@ -305,7 +305,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							<InteractiveWord korean='명월' chinese='明月' />
 							은눈속에찬데
 						</p>
@@ -321,7 +321,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							<InteractiveWord korean='만리변성' chinese='萬里邊城' />에
 							<InteractiveWord korean='일장검' chinese='一長劍' />
 							짊고서서
@@ -338,7 +338,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							긴파람흰한소래에
 						</p>
 					</div>
@@ -353,7 +353,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'upright',
 						}}
 					>
-						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-brand-xl tracking-wide'>
+						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							거칠것이없에라
 						</p>
 					</div>
@@ -368,7 +368,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 							textOrientation: 'mixed',
 						}}
 					>
-						<p className='font-chosun text-sm sm:text-base md:text-lg lg:text-xl font-bold border-r-2 border-gray-900/40 pr-2 sm:pr-3 text-shadow-brand-xl'>
+						<p className='font-chosun text-sm sm:text-base md:text-lg lg:text-xl font-bold border-r-2 border-gray-900/40 pr-2 sm:pr-3 text-shadow-lg'>
 							- 김종서 장군의 시조{' '}
 							<InteractiveWord korean='호기가' chinese='豪氣歌' />
 						</p>

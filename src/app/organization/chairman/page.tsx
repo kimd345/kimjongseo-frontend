@@ -4,8 +4,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import PublicLayout from '@/components/layout/public-layout';
-import { HomeIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 export default function ChairmanMessagePage() {
 	const [imageLoaded, setImageLoaded] = useState(false);
@@ -13,42 +14,16 @@ export default function ChairmanMessagePage() {
 	return (
 		<PublicLayout>
 			{/* Breadcrumbs */}
-			<div className='bg-white border-b border-gray-200'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-					<nav className='flex py-4' aria-label='Breadcrumb'>
-						<ol className='flex items-center space-x-4'>
-							<li>
-								<Link
-									href='/'
-									className='text-gray-400 hover:text-gray-500 transition-colors'
-								>
-									<HomeIcon className='h-5 w-5' />
-									<span className='sr-only'>홈</span>
-								</Link>
-							</li>
-							<li>
-								<div className='flex items-center'>
-									<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-									<Link
-										href='/organization'
-										className='text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors'
-									>
-										기념사업회
-									</Link>
-								</div>
-							</li>
-							<li>
-								<div className='flex items-center'>
-									<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-									<span className='text-sm font-medium text-gray-900'>
-										회장 인사말
-									</span>
-								</div>
-							</li>
-						</ol>
-					</nav>
-				</div>
-			</div>
+			<Breadcrumbs
+				items={[
+					{ name: '기념사업회', href: '/organization' },
+					{
+						name: '회장 인사말',
+						href: '/organization/chairman',
+						current: true,
+					},
+				]}
+			/>
 
 			{/* Page Header */}
 			<div className='bg-gradient-to-r from-brand-900 to-brand-700 text-white'>

@@ -2,16 +2,14 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import PublicLayout from '@/components/layout/public-layout';
 import {
-	HomeIcon,
-	ChevronRightIcon,
 	MapPinIcon,
 	PhoneIcon,
 	EnvelopeIcon,
 	BuildingOfficeIcon,
 } from '@heroicons/react/24/outline';
+import PublicLayout from '@/components/layout/public-layout';
+import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 export default function ContactPage() {
 	const [mapLoaded, setMapLoaded] = useState(false);
@@ -26,31 +24,11 @@ export default function ContactPage() {
 	return (
 		<PublicLayout>
 			{/* Breadcrumbs */}
-			<div className='bg-white border-b border-gray-200'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-					<nav className='flex py-4' aria-label='Breadcrumb'>
-						<ol className='flex items-center space-x-4'>
-							<li>
-								<Link
-									href='/'
-									className='text-gray-400 hover:text-gray-500 transition-colors'
-								>
-									<HomeIcon className='h-5 w-5' />
-									<span className='sr-only'>홈</span>
-								</Link>
-							</li>
-							<li>
-								<div className='flex items-center'>
-									<ChevronRightIcon className='h-5 w-5 text-gray-300 mr-4' />
-									<span className='text-sm font-medium text-gray-900'>
-										연락처 & 오시는 길
-									</span>
-								</div>
-							</li>
-						</ol>
-					</nav>
-				</div>
-			</div>
+			<Breadcrumbs
+				items={[
+					{ name: '연락처 & 오시는 길', href: '/contact', current: true },
+				]}
+			/>
 
 			{/* Page Header */}
 			<div className='bg-gradient-to-r from-brand-900 to-brand-700 text-white'>
