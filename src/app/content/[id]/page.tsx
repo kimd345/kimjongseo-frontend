@@ -1,7 +1,7 @@
-// src/app/content/[id]/page.tsx - Fixed hydration error
+// src/app/content/[id]/page.tsx - Fixed to prevent duplicate view count calls
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -23,6 +23,9 @@ export default function ContentDetailPage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
+	// Prevent duplicate view count increments
+	const viewCountIncremented = useRef(false);
+
 	useEffect(() => {
 		const loadContent = async () => {
 			try {
@@ -38,10 +41,28 @@ export default function ContentDetailPage() {
 					const contentData = await response.json();
 					setContent(contentData);
 
-					// Then increment view count (only once)
-					fetch(`/api/content/${id}/view`, { method: 'POST' }).catch(
-						console.error
-					);
+					// Then increment view count (only once per page load)
+					if (!viewCountIncremented.current) {
+						viewCountIncremented.current = true;
+						fetch(`/api/content/${id}/view`, { method: 'POST' })
+							.then((response) => {
+								if (response.ok) {
+									return response.json();
+								}
+								throw new Error('Failed to increment view count');
+							})
+							.then((result) => {
+								console.log('View count incremented:', result.viewCount);
+								// Update the local content with new view count
+								setContent((prev) =>
+									prev ? { ...prev, viewCount: result.viewCount } : null
+								);
+							})
+							.catch((error) => {
+								console.error('View count increment failed:', error);
+								// Don't show error to user - this is non-critical
+							});
+					}
 				} else {
 					console.error('Content not found, response:', response.status);
 					setError('콘텐츠를 찾을 수 없습니다.');
@@ -57,7 +78,7 @@ export default function ContentDetailPage() {
 		if (id) {
 			loadContent();
 		}
-	}, []);
+	}, [id]); // Only depend on id, not on any other changing values
 
 	if (loading) {
 		return (
@@ -157,7 +178,7 @@ export default function ContentDetailPage() {
 								</div>
 								<div className='flex items-center gap-1'>
 									<EyeIcon className='h-4 w-4' />
-									{content.viewCount} 조회
+									{content.viewCount || 0} 조회
 								</div>
 								{content.author && (
 									<div className='flex items-center gap-1'>

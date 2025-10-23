@@ -41,7 +41,7 @@ export function VideoSection({
 	});
 
 	// Determine if this section should be dark (white text on black bg) or light (black text on white bg)
-	const isDark = index % 2 === 0;
+	const isDark = index % 2 === 1;
 
 	useEffect(() => {
 		const checkMobile = () => {

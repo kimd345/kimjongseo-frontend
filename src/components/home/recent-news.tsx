@@ -16,12 +16,9 @@ export default function RecentNewsSection({
 	if (contents.length === 0) return null;
 
 	return (
-		<section className='py-12 md:py-20 bg-gray-900 text-white'>
+		<section className='py-12 md:py-20 bg-black text-white'>
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<div className='text-center mb-12 md:mb-16'>
-					<span className='inline-block px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded-full mb-4'>
-						최신 소식
-					</span>
 					<h2 className='text-3xl md:text-4xl lg:text-5xl font-bold mb-6'>
 						기념사업회 소식
 					</h2>
@@ -35,7 +32,7 @@ export default function RecentNewsSection({
 						<Link
 							key={content.id}
 							href={`/content/${content.id}`}
-							className='group bg-gray-800 rounded-xl overflow-hidden hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-2 active:scale-[0.98]'
+							className='group bg-gray-900 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-2 active:scale-[0.98]'
 						>
 							{content.images && content.images[0] && (
 								<div className='relative h-48 overflow-hidden'>
@@ -73,7 +70,7 @@ export default function RecentNewsSection({
 				<div className='text-center mt-8 md:mt-12'>
 					<Link
 						href='/library'
-						className='inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-transparent border-2 border-brand-600 text-brand-400 font-semibold rounded-full hover:bg-brand-600 hover:text-white transition-all duration-300 active:scale-[0.98]'
+						className='inline-flex items-center px-6 md:px-8 py-3 md:py-4 bg-transparent border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-black transition-all duration-300 active:scale-[0.98]'
 					>
 						더 많은 소식 보기
 						<ChevronRightIcon className='ml-2 h-5 w-5' />
