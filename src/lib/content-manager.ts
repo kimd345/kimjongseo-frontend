@@ -103,11 +103,11 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 	'about-general': {
 		name: '절재 김종서 장군',
 		description:
-			'조선 초기의 명재상이자 무장인 김종서 장군의 생애와 업적을 소개합니다.',
+			'조선 초기 출장입상(出將入相)한 김종서 장군의 생애와 위대한 업적, 충의대절을 소개합니다.',
 		subsections: {
 			life: '생애 및 업적',
 			significance: '역사적 의의',
-			// Removed: sources (moved to library)
+			// Removed: sources (removed completely)
 			// Removed: photos (removed completely)
 		},
 	},
@@ -117,7 +117,6 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 		subsections: {
 			overview: '사업회 소개',
 			chairman: '회장 인사말',
-			history: '연혁',
 			projects: '선양사업',
 			// Removed: announcements (moved to library)
 		},
@@ -130,7 +129,7 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 			press: '보도자료',
 			academic: '학술 자료·연구 보고서',
 			archive: '사진·영상 아카이브',
-			sources: '관련 사료 및 연구', // Moved from about-general
+			['donation-reports']: '기부금 사용내역 및 결산자료',
 		},
 	},
 	contact: {

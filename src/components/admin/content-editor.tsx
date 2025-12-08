@@ -32,12 +32,12 @@ const CONTENT_ENABLED_SECTIONS = [
 	'library/press', // 자료실 > 보도자료
 	'library/academic', // 자료실 > 학술 자료
 	'library/archive', // 자료실 > 사진·영상 아카이브
-	'library/sources', // 자료실 > 관련 사료 및 연구
+	'library/donation-reports', // 자료실 > 기부금 사용내역 및 결산자료
 	'library/announcements', // 자료실 > 공지사항
 	'organization/projects', // 기념사업회 > 선양사업
-	'organization/history', // 기념사업회 > 연혁 (ADDED)
 	// REMOVED: 'about-general/life' - 절재 김종서 장군 > 생애 및 업적
 	// REMOVED: 'about-general/significance' - 절재 김종서 장군 > 역사적 의의
+	// REMOVED: 'library/sources', // 자료실 > 관련 사료 및 연구
 ];
 
 export default function ContentEditor({ initialContent }: ContentEditorProps) {

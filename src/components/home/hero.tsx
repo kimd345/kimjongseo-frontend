@@ -221,7 +221,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 					onLoad={() => setImageLoaded(true)}
 				/>
 				{/* REVERSED: Light gradient overlay */}
-				<div className='absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40' />
+				{/* <div className='absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40' /> */}
 			</div>
 
 			{/* Main Content - Right Aligned at Top - DARK TEXT */}
@@ -231,15 +231,15 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 			>
 				<div className='ml-auto max-w-2xl'>
 					<h1 className='font-chosun text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 md:mb-6 leading-tight'>
-						절재 김종서 장군
+						절재 김종서
 					</h1>
 					<div className='font-chosun text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-gray-900 mb-6 md:mb-8'>
 						金宗瑞 (1383-1453)
 					</div>
 					<p className='text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-800 leading-relaxed'>
-						조선 전기의 명재상이자 무장
+						조선 전기의 문무겸전한 명재상이자
 						<br />
-						6진 개척을 통한 영토 확장의 주역
+						6진 개척을 통한 한반도 영토 확장의 주역
 					</p>
 				</div>
 			</div>
@@ -291,7 +291,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 					>
 						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							<InteractiveWord korean='삭풍' chinese='朔風' />
-							은나모끝에불고
+							은나무끝에불고
 						</p>
 					</div>
 
@@ -324,7 +324,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
 							<InteractiveWord korean='만리변성' chinese='萬里邊城' />에
 							<InteractiveWord korean='일장검' chinese='一長劍' />
-							짊고서서
+							짚고서서
 						</p>
 					</div>
 
@@ -339,7 +339,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 						}}
 					>
 						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
-							긴파람흰한소래에
+							긴바람큰한소리에
 						</p>
 					</div>
 
@@ -354,7 +354,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 						}}
 					>
 						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
-							거칠것이없에라
+							거칠것이없어라
 						</p>
 					</div>
 

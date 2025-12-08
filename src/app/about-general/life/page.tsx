@@ -296,10 +296,10 @@ export default function LifeAchievementsPage() {
 								<ChevronRightIcon className='ml-2 h-5 w-5' />
 							</Link>
 							<Link
-								href='/library/sources'
+								href='/library/academic'
 								className='inline-flex items-center px-6 py-3 bg-white border-2 border-brand-600 text-brand-600 font-semibold rounded-lg hover:bg-brand-50 transition-all duration-200 shadow-md'
 							>
-								관련 사료 및 연구
+								학술 자료 보기
 								<ChevronRightIcon className='ml-2 h-5 w-5' />
 							</Link>
 						</div>

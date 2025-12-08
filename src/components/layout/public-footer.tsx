@@ -7,24 +7,20 @@ export default function PublicFooter() {
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
 				<div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
 					{/* Organization Info */}
-					<div className='md:col-span-2'>
-						<div className='flex items-center gap-3 mb-4'>
-							<h3 className='text-lg font-bold'>김종서장군기념사업회</h3>
-						</div>
-						<p className='text-gray-300 mb-4'>
-							절재 김종서 장군의 역사적 의의를 기리고 선양사업을 통해 올바른
-							역사 인식을 확산하는 공익법인입니다.
-						</p>
+					<div className='md:col-span-2 flex justify-center items-center'>
+						<h3 className='text-2xl font-bold'>
+							사단법인 김종서장군기념사업회
+						</h3>
 					</div>
 
 					{/* Contact Info */}
 					<div>
 						<h4 className='text-lg font-semibold mb-4'>연락처</h4>
 						<div className='space-y-2 text-gray-300'>
-							<p>전화: 010-4738-9122</p>
+							{/* <p>전화: 010-4738-9122</p> */}
 							<p>이메일: kjsassociation@naver.com</p>
 							<p>
-								재단 찾아오시는 길 주소:
+								재단 사무실 주소:
 								<br />
 								서울 중구 남대문로7길 29 복창빌딩 904호
 							</p>
