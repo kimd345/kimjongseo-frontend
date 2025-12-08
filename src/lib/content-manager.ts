@@ -103,7 +103,7 @@ export const FIXED_SECTIONS: Record<string, SectionInfo> = {
 	'about-general': {
 		name: '절재 김종서 장군',
 		description:
-			'조선 초기 출장입상(出將入相)한 김종서 장군의 생애와 위대한 업적, 충의대절을 소개합니다.',
+			'조선 초기 출장입상(出將入相)한 명재상 김종서 장군의 생애와 위대한 업적, 충의대절을 소개합니다.',
 		subsections: {
 			life: '생애 및 업적',
 			significance: '역사적 의의',

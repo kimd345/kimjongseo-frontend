@@ -339,7 +339,7 @@ export default function EnhancedHeroSection({}: EnhancedHeroSectionProps) {
 						}}
 					>
 						<p className='font-chosun text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-shadow-lg tracking-wide'>
-							긴바람큰한소리에
+							긴파람큰한소리에
 						</p>
 					</div>
 
